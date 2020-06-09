@@ -11,3 +11,8 @@ pgv_dependency_imports()
 load("//bazel:pip_dependencies.bzl", "pgv_pip_dependencies")
 
 pgv_pip_dependencies()
+
+load("//bazel:dependency_imports.bzl", "go_repositories")
+
+# gazelle:repository_macro bazel/dependency_imports.bzl%go_repositories
+go_repositories()
