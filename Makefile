@@ -7,6 +7,7 @@ VALIDATE_IMPORT := Mvalidate/validate.proto=${PACKAGE}/validate
 GO_IMPORT_SPACES := ${VALIDATE_IMPORT},\
 	Mgoogle/protobuf/any.proto=github.com/golang/protobuf/ptypes/any,\
 	Mgoogle/protobuf/duration.proto=github.com/golang/protobuf/ptypes/duration,\
+	Mgoogle/protobuf/field_mask.proto=github.com/golang/protobuf/ptypes/field_mask,\
 	Mgoogle/protobuf/struct.proto=github.com/golang/protobuf/ptypes/struct,\
 	Mgoogle/protobuf/timestamp.proto=github.com/golang/protobuf/ptypes/timestamp,\
 	Mgoogle/protobuf/wrappers.proto=github.com/golang/protobuf/ptypes/wrappers,\
