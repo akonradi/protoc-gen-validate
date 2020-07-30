@@ -7,6 +7,10 @@ const msgTpl = `
 	{{ cmt "Validate checks the field values on " (msgTyp .) " with the rules defined in the proto definition for this message. If any rules are violated, an error is returned." }}
 {{- end -}}
 func (m {{ (msgTyp .).Pointer }}) Validate() error {
+	return m.ValidateWithMask(field_mask.FieldMask{})
+}
+
+func (m {{ (msgTyp .).Pointer }}) ValidateWithMask(mask field_mask.FieldMask) error {
 	{{ if disabled . -}}
 		return nil
 	{{ else -}}
@@ -24,9 +28,11 @@ func (m {{ (msgTyp .).Pointer }}) Validate() error {
 				{{ end }}
 				{{ if required . }}
 					default:
-						return {{ errname .Message }}{
-							field: "{{ name . }}",
-							reason: "value is required",
+						if m.maskHas(mask, "{{ .Name }}") {
+							return {{ errname .Message }}{
+								field: "{{ name . }}",
+								reason: "value is required",
+							}
 						}
 				{{ end }}
 			}
@@ -34,6 +40,15 @@ func (m {{ (msgTyp .).Pointer }}) Validate() error {
 
 		return nil
 	{{ end -}}
+}
+
+func (m {{ (msgTyp .).Pointer }}) maskHas(mask field_mask.FieldMask, name string) bool {
+	for _, path := range mask.GetPaths() {
+		if name == path {
+			return true
+		}
+	}
+	return false
 }
 
 {{ if needs . "hostname" }}{{ template "hostname" . }}{{ end }}
