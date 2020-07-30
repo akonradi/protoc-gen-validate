@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -25,9 +26,9 @@ func main() {
 
 	var mask *field_mask.FieldMask
 	if m, ok := da.Message.(interface {
-		GetMask() *field_mask.FieldMask
+		GetUpdateMask() *field_mask.FieldMask
 	}); ok {
-		mask = m.GetMask()
+		mask = m.GetUpdateMask()
 	}
 
 	// just don't panic
