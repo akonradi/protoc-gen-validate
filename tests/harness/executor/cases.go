@@ -161,25 +161,31 @@ var doubleCases = []TestCase{
 
 	{"double - in - valid", &cases.DoubleIn{Val: 7.89}, true},
 	{"double - in - invalid", &cases.DoubleIn{Val: 10.11}, false},
+	{"double - in - no mask - valid", &cases.DoubleIn{Val: 10.11, UpdateMask: mkMask()}, true},
 
 	{"double - not in - valid", &cases.DoubleNotIn{Val: 1}, true},
 	{"double - not in - invalid", &cases.DoubleNotIn{Val: 0}, false},
+	{"double - not in - no mask - valid", &cases.DoubleNotIn{Val: 0, UpdateMask: mkMask()}, true},
 
 	{"double - lt - valid", &cases.DoubleLT{Val: -1}, true},
 	{"double - lt - invalid (equal)", &cases.DoubleLT{Val: 0}, false},
 	{"double - lt - invalid", &cases.DoubleLT{Val: 1}, false},
+	{"double - lt - no mask - valid", &cases.DoubleLT{Val: 1, UpdateMask: mkMask()}, true},
 
 	{"double - lte - valid", &cases.DoubleLTE{Val: 63}, true},
 	{"double - lte - valid (equal)", &cases.DoubleLTE{Val: 64}, true},
 	{"double - lte - invalid", &cases.DoubleLTE{Val: 65}, false},
+	{"double - lte - no mask - valid", &cases.DoubleLTE{Val: 65, UpdateMask: mkMask()}, true},
 
 	{"double - gt - valid", &cases.DoubleGT{Val: 17}, true},
 	{"double - gt - invalid (equal)", &cases.DoubleGT{Val: 16}, false},
 	{"double - gt - invalid", &cases.DoubleGT{Val: 15}, false},
+	{"double - gt - no mask - valid", &cases.DoubleGT{Val: 15, UpdateMask: mkMask()}, true},
 
 	{"double - gte - valid", &cases.DoubleGTE{Val: 9}, true},
 	{"double - gte - valid (equal)", &cases.DoubleGTE{Val: 8}, true},
 	{"double - gte - invalid", &cases.DoubleGTE{Val: 7}, false},
+	{"double - gte - no mask - valid", &cases.DoubleGTE{Val: 7, UpdateMask: mkMask()}, true},
 
 	{"double - gt & lt - valid", &cases.DoubleGTLT{Val: 5}, true},
 	{"double - gt & lt - invalid (above)", &cases.DoubleGTLT{Val: 11}, false},
@@ -190,6 +196,7 @@ var doubleCases = []TestCase{
 	{"double - exclusive gt & lt - valid (above)", &cases.DoubleExLTGT{Val: 11}, true},
 	{"double - exclusive gt & lt - valid (below)", &cases.DoubleExLTGT{Val: -1}, true},
 	{"double - exclusive gt & lt - invalid", &cases.DoubleExLTGT{Val: 5}, false},
+	{"double - exclusive gt & lt - no mask - valid", &cases.DoubleExLTGT{Val: 5, UpdateMask: mkMask()}, true},
 	{"double - exclusive gt & lt - invalid (max)", &cases.DoubleExLTGT{Val: 10}, false},
 	{"double - exclusive gt & lt - invalid (min)", &cases.DoubleExLTGT{Val: 0}, false},
 
@@ -204,6 +211,7 @@ var doubleCases = []TestCase{
 	{"double - exclusive gte & lte - valid (max)", &cases.DoubleExGTELTE{Val: 256}, true},
 	{"double - exclusive gte & lte - valid (min)", &cases.DoubleExGTELTE{Val: 128}, true},
 	{"double - exclusive gte & lte - invalid", &cases.DoubleExGTELTE{Val: 200}, false},
+	{"double - exclusive gte & lte - no mask - valid", &cases.DoubleExGTELTE{Val: 200, UpdateMask: mkMask()}, true},
 }
 
 var int32Cases = []TestCase{
@@ -740,8 +748,10 @@ var boolCases = []TestCase{
 	{"bool - none - valid", &cases.BoolNone{Val: true}, true},
 	{"bool - const (true) - valid", &cases.BoolConstTrue{Val: true}, true},
 	{"bool - const (true) - invalid", &cases.BoolConstTrue{Val: false}, false},
+	{"bool - const (true) - no mask - valid", &cases.BoolConstTrue{Val: false, UpdateMask: mkMask()}, true},
 	{"bool - const (false) - valid", &cases.BoolConstFalse{Val: false}, true},
 	{"bool - const (false) - invalid", &cases.BoolConstFalse{Val: true}, false},
+	{"bool - const (false) - no mask - valid", &cases.BoolConstFalse{Val: true, UpdateMask: mkMask()}, true},
 }
 
 var stringCases = []TestCase{
@@ -749,11 +759,14 @@ var stringCases = []TestCase{
 
 	{"string - const - valid", &cases.StringConst{Val: "foo"}, true},
 	{"string - const - invalid", &cases.StringConst{Val: "bar"}, false},
+	{"string - const - no mask - valid", &cases.StringConst{Val: "bar", UpdateMask: mkMask()}, true},
 
 	{"string - in - valid", &cases.StringIn{Val: "bar"}, true},
 	{"string - in - invalid", &cases.StringIn{Val: "quux"}, false},
+	{"string - in - no mask - valid", &cases.StringIn{Val: "quux", UpdateMask: mkMask()}, true},
 	{"string - not in - valid", &cases.StringNotIn{Val: "quux"}, true},
 	{"string - not in - invalid", &cases.StringNotIn{Val: "fizz"}, false},
+	{"string - not in - no mask - valid", &cases.StringNotIn{Val: "fizz", UpdateMask: mkMask()}, true},
 
 	{"string - len - valid", &cases.StringLen{Val: "baz"}, true},
 	{"string - len - valid (multibyte)", &cases.StringLen{Val: "你好吖"}, true},
@@ -764,12 +777,14 @@ var stringCases = []TestCase{
 	{"string - min len - valid", &cases.StringMinLen{Val: "protoc"}, true},
 	{"string - min len - valid (min)", &cases.StringMinLen{Val: "baz"}, true},
 	{"string - min len - invalid", &cases.StringMinLen{Val: "go"}, false},
+	{"string - min len - no mask - valid", &cases.StringMinLen{Val: "go", UpdateMask: mkMask()}, true},
 	{"string - min len - invalid (multibyte)", &cases.StringMinLen{Val: "你好"}, false},
 
 	{"string - max len - valid", &cases.StringMaxLen{Val: "foo"}, true},
 	{"string - max len - valid (max)", &cases.StringMaxLen{Val: "proto"}, true},
 	{"string - max len - valid (multibyte)", &cases.StringMaxLen{Val: "你好你好"}, true},
 	{"string - max len - invalid", &cases.StringMaxLen{Val: "1234567890"}, false},
+	{"string - max len - no mask - valid", &cases.StringMaxLen{Val: "1234567890", UpdateMask: mkMask()}, true},
 
 	{"string - min/max len - valid", &cases.StringMinMaxLen{Val: "quux"}, true},
 	{"string - min/max len - valid (min)", &cases.StringMinMaxLen{Val: "foo"}, true},
@@ -780,6 +795,7 @@ var stringCases = []TestCase{
 
 	{"string - equal min/max len - valid", &cases.StringEqualMinMaxLen{Val: "proto"}, true},
 	{"string - equal min/max len - invalid", &cases.StringEqualMinMaxLen{Val: "validate"}, false},
+	{"string - equal min/max len - no mask - valid", &cases.StringEqualMinMaxLen{Val: "validate", UpdateMask: mkMask()}, true},
 
 	{"string - len bytes - valid", &cases.StringLenBytes{Val: "pace"}, true},
 	{"string - len bytes - invalid (lt)", &cases.StringLenBytes{Val: "val"}, false},
@@ -790,10 +806,12 @@ var stringCases = []TestCase{
 	{"string - min bytes - valid (min)", &cases.StringMinBytes{Val: "quux"}, true},
 	{"string - min bytes - valid (multibyte)", &cases.StringMinBytes{Val: "你好"}, true},
 	{"string - min bytes - invalid", &cases.StringMinBytes{Val: ""}, false},
+	{"string - min bytes - no mask - valid", &cases.StringMinBytes{Val: "", UpdateMask: mkMask()}, true},
 
 	{"string - max bytes - valid", &cases.StringMaxBytes{Val: "foo"}, true},
 	{"string - max bytes - valid (max)", &cases.StringMaxBytes{Val: "12345678"}, true},
 	{"string - max bytes - invalid", &cases.StringMaxBytes{Val: "123456789"}, false},
+	{"string - max bytes - no mask - valid", &cases.StringMaxBytes{Val: "123456789", UpdateMask: mkMask()}, true},
 	{"string - max bytes - invalid (multibyte)", &cases.StringMaxBytes{Val: "你好你好你好"}, false},
 
 	{"string - min/max bytes - valid", &cases.StringMinMaxBytes{Val: "protoc"}, true},
@@ -805,39 +823,47 @@ var stringCases = []TestCase{
 
 	{"string - equal min/max bytes - valid", &cases.StringEqualMinMaxBytes{Val: "protoc"}, true},
 	{"string - equal min/max bytes - invalid", &cases.StringEqualMinMaxBytes{Val: "foo"}, false},
+	{"string - equal min/max bytes - no mask - valid", &cases.StringEqualMinMaxBytes{Val: "foo", UpdateMask: mkMask()}, true},
 
 	{"string - pattern - valid", &cases.StringPattern{Val: "Foo123"}, true},
 	{"string - pattern - invalid", &cases.StringPattern{Val: "!@#$%^&*()"}, false},
+	{"string - pattern - no mask - valid", &cases.StringPattern{Val: "!@#$%^&*()", UpdateMask: mkMask()}, true},
 	{"string - pattern - invalid (empty)", &cases.StringPattern{Val: ""}, false},
 	{"string - pattern - invalid (null)", &cases.StringPattern{Val: "a\000"}, false},
 
 	{"string - pattern (escapes) - valid", &cases.StringPatternEscapes{Val: "* \\ x"}, true},
 	{"string - pattern (escapes) - invalid", &cases.StringPatternEscapes{Val: "invalid"}, false},
+	{"string - pattern (escapes) - no mask - valid", &cases.StringPatternEscapes{Val: "invalid", UpdateMask: mkMask()}, true},
 	{"string - pattern (escapes) - invalid (empty)", &cases.StringPatternEscapes{Val: ""}, false},
 
 	{"string - prefix - valid", &cases.StringPrefix{Val: "foobar"}, true},
 	{"string - prefix - valid (only)", &cases.StringPrefix{Val: "foo"}, true},
 	{"string - prefix - invalid", &cases.StringPrefix{Val: "bar"}, false},
+	{"string - prefix - no mask - valid", &cases.StringPrefix{Val: "bar", UpdateMask: mkMask()}, true},
 	{"string - prefix - invalid (case-sensitive)", &cases.StringPrefix{Val: "Foobar"}, false},
 
 	{"string - contains - valid", &cases.StringContains{Val: "candy bars"}, true},
 	{"string - contains - valid (only)", &cases.StringContains{Val: "bar"}, true},
 	{"string - contains - invalid", &cases.StringContains{Val: "candy bazs"}, false},
+	{"string - contains - no mask - valid", &cases.StringContains{Val: "candy bazs", UpdateMask: mkMask()}, true},
 	{"string - contains - invalid (case-sensitive)", &cases.StringContains{Val: "Candy Bars"}, false},
 
 	{"string - not contains - valid", &cases.StringNotContains{Val: "candy bazs"}, true},
 	{"string - not contains - valid (case-sensitive)", &cases.StringNotContains{Val: "Candy Bars"}, true},
 	{"string - not contains - invalid", &cases.StringNotContains{Val: "candy bars"}, false},
+	{"string - not contains - no mask - valid", &cases.StringNotContains{Val: "candy bars", UpdateMask: mkMask()}, true},
 	{"string - not contains - invalid (equal)", &cases.StringNotContains{Val: "bar"}, false},
 
 	{"string - suffix - valid", &cases.StringSuffix{Val: "foobaz"}, true},
 	{"string - suffix - valid (only)", &cases.StringSuffix{Val: "baz"}, true},
 	{"string - suffix - invalid", &cases.StringSuffix{Val: "foobar"}, false},
+	{"string - suffix - no mask - valid", &cases.StringSuffix{Val: "foobar", UpdateMask: mkMask()}, true},
 	{"string - suffix - invalid (case-sensitive)", &cases.StringSuffix{Val: "FooBaz"}, false},
 
 	{"string - email - valid", &cases.StringEmail{Val: "foo@bar.com"}, true},
 	{"string - email - valid (name)", &cases.StringEmail{Val: "John Smith <foo@bar.com>"}, true},
 	{"string - email - invalid", &cases.StringEmail{Val: "foobar"}, false},
+	{"string - email - no mask - valid", &cases.StringEmail{Val: "foobar", UpdateMask: mkMask()}, true},
 	{"string - email - invalid (local segment too long)", &cases.StringEmail{Val: "x0123456789012345678901234567890123456789012345678901234567890123456789@example.com"}, false},
 	{"string - email - invalid (hostname too long)", &cases.StringEmail{Val: "foo@x0123456789012345678901234567890123456789012345678901234567890123456789.com"}, false},
 	{"string - email - invalid (bad hostname)", &cases.StringEmail{Val: "foo@-bar.com"}, false},
@@ -862,6 +888,7 @@ var stringCases = []TestCase{
 	{"string - hostname - valid (hyphens)", &cases.StringHostname{Val: "foo-bar.com"}, true},
 	{"string - hostname - valid (trailing dot)", &cases.StringHostname{Val: "example.com."}, true},
 	{"string - hostname - invalid", &cases.StringHostname{Val: "!@#$%^&"}, false},
+	{"string - hostname - no mask - valid", &cases.StringHostname{Val: "!@#$%^&", UpdateMask: mkMask()}, true},
 	{"string - hostname - invalid (underscore)", &cases.StringHostname{Val: "foo_bar.com"}, false},
 	{"string - hostname - invalid (too long)", &cases.StringHostname{Val: "x0123456789012345678901234567890123456789012345678901234567890123456789.com"}, false},
 	{"string - hostname - invalid (trailing hyphens)", &cases.StringHostname{Val: "foo-bar-.com"}, false},
@@ -872,6 +899,7 @@ var stringCases = []TestCase{
 	{"string - IP - valid (v4)", &cases.StringIP{Val: "192.168.0.1"}, true},
 	{"string - IP - valid (v6)", &cases.StringIP{Val: "3e::99"}, true},
 	{"string - IP - invalid", &cases.StringIP{Val: "foobar"}, false},
+	{"string - IP - no mask - valid", &cases.StringIP{Val: "foobar", UpdateMask: mkMask()}, true},
 
 	{"string - IPv4 - valid", &cases.StringIPv4{Val: "192.168.0.1"}, true},
 	{"string - IPv4 - invalid", &cases.StringIPv4{Val: "foobar"}, false},
@@ -886,11 +914,13 @@ var stringCases = []TestCase{
 
 	{"string - URI - valid", &cases.StringURI{Val: "http://example.com/foo/bar?baz=quux"}, true},
 	{"string - URI - invalid", &cases.StringURI{Val: "!@#$%^&*%$#"}, false},
+	{"string - URI - no mask - valid", &cases.StringURI{Val: "!@#$%^&*%$#", UpdateMask: mkMask()}, true},
 	{"string - URI - invalid (relative)", &cases.StringURI{Val: "/foo/bar?baz=quux"}, false},
 
 	{"string - URI - valid", &cases.StringURIRef{Val: "http://example.com/foo/bar?baz=quux"}, true},
 	{"string - URI - valid (relative)", &cases.StringURIRef{Val: "/foo/bar?baz=quux"}, true},
 	{"string - URI - invalid", &cases.StringURIRef{Val: "!@#$%^&*%$#"}, false},
+	{"string - URI - no mask - valid", &cases.StringURIRef{Val: "!@#$%^&*%$#", UpdateMask: mkMask()}, true},
 
 	{"string - UUID - valid (nil)", &cases.StringUUID{Val: "00000000-0000-0000-0000-000000000000"}, true},
 	{"string - UUID - valid (v1)", &cases.StringUUID{Val: "b45c0c80-8880-11e9-a5b1-000000000000"}, true},
@@ -904,6 +934,7 @@ var stringCases = []TestCase{
 	{"string - UUID - valid (v5)", &cases.StringUUID{Val: "a6edc906-2f9f-5fb2-a373-efac406f0ef2"}, true},
 	{"string - UUID - valid (v5 - case-insensitive)", &cases.StringUUID{Val: "A6EDC906-2F9F-5FB2-A373-EFAC406F0EF2"}, true},
 	{"string - UUID - invalid", &cases.StringUUID{Val: "foobar"}, false},
+	{"string - UUID - no mask - valid", &cases.StringUUID{Val: "foobar", UpdateMask: mkMask()}, true},
 	{"string - UUID - invalid (bad UUID)", &cases.StringUUID{Val: "ffffffff-ffff-ffff-ffff-fffffffffffff"}, false},
 
 	{"string - http header name - valid", &cases.StringHttpHeaderName{Val: "clustername"}, true},
@@ -912,7 +943,9 @@ var stringCases = []TestCase{
 	{"string - http header name - valid (special token)", &cases.StringHttpHeaderName{Val: "!+#&.%"}, true},
 	{"string - http header name - valid (period)", &cases.StringHttpHeaderName{Val: "CLUSTER.NAME"}, true},
 	{"string - http header name - invalid", &cases.StringHttpHeaderName{Val: ":"}, false},
+	{"string - http header name - no mask - valid", &cases.StringHttpHeaderName{Val: ":", UpdateMask: mkMask()}, true},
 	{"string - http header name - invalid", &cases.StringHttpHeaderName{Val: ":path:"}, false},
+	{"string - http header name - no mask - valid", &cases.StringHttpHeaderName{Val: ":path:", UpdateMask: mkMask()}, true},
 	{"string - http header name - invalid (space)", &cases.StringHttpHeaderName{Val: "cluster name"}, false},
 	{"string - http header name - invalid (return)", &cases.StringHttpHeaderName{Val: "example\r"}, false},
 	{"string - http header name - invalid (tab)", &cases.StringHttpHeaderName{Val: "example\t"}, false},
@@ -926,6 +959,7 @@ var stringCases = []TestCase{
 	{"string - http header value - invalid (NUL)", &cases.StringHttpHeaderValue{Val: "foo\u0000bar"}, false},
 	{"string - http header value - invalid (DEL)", &cases.StringHttpHeaderValue{Val: "\u007f"}, false},
 	{"string - http header value - invalid", &cases.StringHttpHeaderValue{Val: "example\r"}, false},
+	{"string - http header value - no mask - valid", &cases.StringHttpHeaderValue{Val: "example\r", UpdateMask: mkMask()}, true},
 
 	{"string - non-strict valid header - valid", &cases.StringValidHeader{Val: "cluster.name.123"}, true},
 	{"string - non-strict valid header - valid (uppercase)", &cases.StringValidHeader{Val: "/TEST/LONG/URL"}, true},
@@ -942,11 +976,14 @@ var bytesCases = []TestCase{
 
 	{"bytes - const - valid", &cases.BytesConst{Val: []byte("foo")}, true},
 	{"bytes - const - invalid", &cases.BytesConst{Val: []byte("bar")}, false},
+	{"bytes - const - no mask - valid", &cases.BytesConst{Val: []byte("bar"), UpdateMask: mkMask()}, true},
 
 	{"bytes - in - valid", &cases.BytesIn{Val: []byte("bar")}, true},
 	{"bytes - in - invalid", &cases.BytesIn{Val: []byte("quux")}, false},
+	{"bytes - in - no mask - valid", &cases.BytesIn{Val: []byte("quux"), UpdateMask: mkMask()}, true},
 	{"bytes - not in - valid", &cases.BytesNotIn{Val: []byte("quux")}, true},
 	{"bytes - not in - invalid", &cases.BytesNotIn{Val: []byte("fizz")}, false},
+	{"bytes - not in - no mask - valid", &cases.BytesNotIn{Val: []byte("fizz"), UpdateMask: mkMask()}, true},
 
 	{"bytes - len - valid", &cases.BytesLen{Val: []byte("baz")}, true},
 	{"bytes - len - invalid (lt)", &cases.BytesLen{Val: []byte("go")}, false},
@@ -955,10 +992,12 @@ var bytesCases = []TestCase{
 	{"bytes - min len - valid", &cases.BytesMinLen{Val: []byte("fizz")}, true},
 	{"bytes - min len - valid (min)", &cases.BytesMinLen{Val: []byte("baz")}, true},
 	{"bytes - min len - invalid", &cases.BytesMinLen{Val: []byte("go")}, false},
+	{"bytes - min len - no mask - valid", &cases.BytesMinLen{Val: []byte("go"), UpdateMask: mkMask()}, true},
 
 	{"bytes - max len - valid", &cases.BytesMaxLen{Val: []byte("foo")}, true},
 	{"bytes - max len - valid (max)", &cases.BytesMaxLen{Val: []byte("proto")}, true},
 	{"bytes - max len - invalid", &cases.BytesMaxLen{Val: []byte("1234567890")}, false},
+	{"bytes - max len - no mask - valid", &cases.BytesMaxLen{Val: []byte("1234567890"), UpdateMask: mkMask()}, true},
 
 	{"bytes - min/max len - valid", &cases.BytesMinMaxLen{Val: []byte("quux")}, true},
 	{"bytes - min/max len - valid (min)", &cases.BytesMinMaxLen{Val: []byte("foo")}, true},
@@ -968,27 +1007,33 @@ var bytesCases = []TestCase{
 
 	{"bytes - equal min/max len - valid", &cases.BytesEqualMinMaxLen{Val: []byte("proto")}, true},
 	{"bytes - equal min/max len - invalid", &cases.BytesEqualMinMaxLen{Val: []byte("validate")}, false},
+	{"bytes - equal min/max len - no mask - valid", &cases.BytesEqualMinMaxLen{Val: []byte("validate"), UpdateMask: mkMask()}, true},
 
 	{"bytes - pattern - valid", &cases.BytesPattern{Val: []byte("Foo123")}, true},
 	{"bytes - pattern - invalid", &cases.BytesPattern{Val: []byte("你好你好")}, false},
+	{"bytes - pattern - no mask - valid", &cases.BytesPattern{Val: []byte("你好你好"), UpdateMask: mkMask()}, true},
 	{"bytes - pattern - invalid (empty)", &cases.BytesPattern{Val: []byte("")}, false},
 
 	{"bytes - prefix - valid", &cases.BytesPrefix{Val: []byte{0x99, 0x9f, 0x08}}, true},
 	{"bytes - prefix - valid (only)", &cases.BytesPrefix{Val: []byte{0x99}}, true},
 	{"bytes - prefix - invalid", &cases.BytesPrefix{Val: []byte("bar")}, false},
+	{"bytes - prefix - no mask - valid", &cases.BytesPrefix{Val: []byte("bar"), UpdateMask: mkMask()}, true},
 
 	{"bytes - contains - valid", &cases.BytesContains{Val: []byte("candy bars")}, true},
 	{"bytes - contains - valid (only)", &cases.BytesContains{Val: []byte("bar")}, true},
 	{"bytes - contains - invalid", &cases.BytesContains{Val: []byte("candy bazs")}, false},
+	{"bytes - contains - no mask - valid", &cases.BytesContains{Val: []byte("candy bazs"), UpdateMask: mkMask()}, true},
 
 	{"bytes - suffix - valid", &cases.BytesSuffix{Val: []byte{0x62, 0x75, 0x7A, 0x7A}}, true},
 	{"bytes - suffix - valid (only)", &cases.BytesSuffix{Val: []byte("\x62\x75\x7A\x7A")}, true},
 	{"bytes - suffix - invalid", &cases.BytesSuffix{Val: []byte("foobar")}, false},
+	{"bytes - suffix - no mask - valid", &cases.BytesSuffix{Val: []byte("foobar"), UpdateMask: mkMask()}, true},
 	{"bytes - suffix - invalid (case-sensitive)", &cases.BytesSuffix{Val: []byte("FooBaz")}, false},
 
 	{"bytes - IP - valid (v4)", &cases.BytesIP{Val: []byte{0xC0, 0xA8, 0x00, 0x01}}, true},
 	{"bytes - IP - valid (v6)", &cases.BytesIP{Val: []byte("\x20\x01\x0D\xB8\x85\xA3\x00\x00\x00\x00\x8A\x2E\x03\x70\x73\x34")}, true},
 	{"bytes - IP - invalid", &cases.BytesIP{Val: []byte("foobar")}, false},
+	{"bytes - IP - no mask - valid", &cases.BytesIP{Val: []byte("foobar"), UpdateMask: mkMask()}, true},
 
 	{"bytes - IPv4 - valid", &cases.BytesIPv4{Val: []byte{0xC0, 0xA8, 0x00, 0x01}}, true},
 	{"bytes - IPv4 - invalid", &cases.BytesIPv4{Val: []byte("foobar")}, false},
@@ -1004,42 +1049,55 @@ var enumCases = []TestCase{
 
 	{"enum - const - valid", &cases.EnumConst{Val: cases.TestEnum_TWO}, true},
 	{"enum - const - invalid", &cases.EnumConst{Val: cases.TestEnum_ONE}, false},
+	{"enum - const - no mask - valid", &cases.EnumConst{Val: cases.TestEnum_ONE, UpdateMask: mkMask()}, true},
 	{"enum alias - const - valid", &cases.EnumAliasConst{Val: cases.TestEnumAlias_C}, true},
 	{"enum alias - const - valid (alias)", &cases.EnumAliasConst{Val: cases.TestEnumAlias_GAMMA}, true},
 	{"enum alias - const - invalid", &cases.EnumAliasConst{Val: cases.TestEnumAlias_ALPHA}, false},
+	{"enum alias - const - no mask - valid", &cases.EnumAliasConst{Val: cases.TestEnumAlias_ALPHA, UpdateMask: mkMask()}, true},
 
 	{"enum - defined_only - valid", &cases.EnumDefined{Val: 0}, true},
 	{"enum - defined_only - invalid", &cases.EnumDefined{Val: math.MaxInt32}, false},
+	{"enum - defined_only - no mask - valid", &cases.EnumDefined{Val: math.MaxInt32, UpdateMask: mkMask()}, true},
 	{"enum alias - defined_only - valid", &cases.EnumAliasDefined{Val: 1}, true},
 	{"enum alias - defined_only - invalid", &cases.EnumAliasDefined{Val: math.MaxInt32}, false},
+	{"enum alias - defined_only - no mask - valid", &cases.EnumAliasDefined{Val: math.MaxInt32, UpdateMask: mkMask()}, true},
 
 	{"enum - in - valid", &cases.EnumIn{Val: cases.TestEnum_TWO}, true},
 	{"enum - in - invalid", &cases.EnumIn{Val: cases.TestEnum_ONE}, false},
+	{"enum - in - no mask - valid", &cases.EnumIn{Val: cases.TestEnum_ONE, UpdateMask: mkMask()}, true},
 	{"enum alias - in - valid", &cases.EnumAliasIn{Val: cases.TestEnumAlias_A}, true},
 	{"enum alias - in - valid (alias)", &cases.EnumAliasIn{Val: cases.TestEnumAlias_ALPHA}, true},
 	{"enum alias - in - invalid", &cases.EnumAliasIn{Val: cases.TestEnumAlias_BETA}, false},
+	{"enum alias - in - no mask - valid", &cases.EnumAliasIn{Val: cases.TestEnumAlias_BETA, UpdateMask: mkMask()}, true},
 
 	{"enum - not in - valid", &cases.EnumNotIn{Val: cases.TestEnum_ZERO}, true},
 	{"enum - not in - valid (undefined)", &cases.EnumNotIn{Val: math.MaxInt32}, true},
 	{"enum - not in - invalid", &cases.EnumNotIn{Val: cases.TestEnum_ONE}, false},
+	{"enum - not in - no mask - valid", &cases.EnumNotIn{Val: cases.TestEnum_ONE, UpdateMask: mkMask()}, true},
 	{"enum alias - not in - valid", &cases.EnumAliasNotIn{Val: cases.TestEnumAlias_ALPHA}, true},
 	{"enum alias - not in - invalid", &cases.EnumAliasNotIn{Val: cases.TestEnumAlias_B}, false},
+	{"enum alias - not in - no mask - valid", &cases.EnumAliasNotIn{Val: cases.TestEnumAlias_B, UpdateMask: mkMask()}, true},
 	{"enum alias - not in - invalid (alias)", &cases.EnumAliasNotIn{Val: cases.TestEnumAlias_BETA}, false},
 
 	{"enum external - defined_only - valid", &cases.EnumExternal{Val: other_package.Embed_VALUE}, true},
 	{"enum external - defined_only - invalid", &cases.EnumExternal{Val: math.MaxInt32}, false},
+	{"enum external - defined_only - no mask - valid", &cases.EnumExternal{Val: math.MaxInt32, UpdateMask: mkMask()}, true},
 
 	{"enum repeated - defined_only - valid", &cases.RepeatedEnumDefined{Val: []cases.TestEnum{cases.TestEnum_ONE, cases.TestEnum_TWO}}, true},
 	{"enum repeated - defined_only - invalid", &cases.RepeatedEnumDefined{Val: []cases.TestEnum{cases.TestEnum_ONE, math.MaxInt32}}, false},
+	{"enum repeated - defined_only - no mask - valid", &cases.RepeatedEnumDefined{Val: []cases.TestEnum{cases.TestEnum_ONE, math.MaxInt32}, UpdateMask: mkMask()}, true},
 
 	{"enum repeated (external) - defined_only - valid", &cases.RepeatedExternalEnumDefined{Val: []other_package.Embed_Enumerated{other_package.Embed_VALUE}}, true},
 	{"enum repeated (external) - defined_only - invalid", &cases.RepeatedExternalEnumDefined{Val: []other_package.Embed_Enumerated{math.MaxInt32}}, false},
+	{"enum repeated (external) - defined_only - no mask - valid", &cases.RepeatedExternalEnumDefined{Val: []other_package.Embed_Enumerated{math.MaxInt32}, UpdateMask: mkMask()}, true},
 
 	{"enum map - defined_only - valid", &cases.MapEnumDefined{Val: map[string]cases.TestEnum{"foo": cases.TestEnum_TWO}}, true},
 	{"enum map - defined_only - invalid", &cases.MapEnumDefined{Val: map[string]cases.TestEnum{"foo": math.MaxInt32}}, false},
+	{"enum map - defined_only - no mask - valid", &cases.MapEnumDefined{Val: map[string]cases.TestEnum{"foo": math.MaxInt32}, UpdateMask: mkMask()}, true},
 
 	{"enum map (external) - defined_only - valid", &cases.MapExternalEnumDefined{Val: map[string]other_package.Embed_Enumerated{"foo": other_package.Embed_VALUE}}, true},
 	{"enum map (external) - defined_only - invalid", &cases.MapExternalEnumDefined{Val: map[string]other_package.Embed_Enumerated{"foo": math.MaxInt32}}, false},
+	{"enum map (external) - defined_only - no mask - valid", &cases.MapExternalEnumDefined{Val: map[string]other_package.Embed_Enumerated{"foo": math.MaxInt32}, UpdateMask: mkMask()}, true},
 }
 
 var messageCases = []TestCase{
@@ -1052,6 +1110,7 @@ var messageCases = []TestCase{
 	{"message - field - valid", &cases.Message{Val: &cases.TestMsg{Const: "foo"}}, true},
 	{"message - field - valid (unset)", &cases.Message{}, true},
 	{"message - field - invalid", &cases.Message{Val: &cases.TestMsg{}}, false},
+	{"message - field - no mask - valid", &cases.Message{Val: &cases.TestMsg{}, UpdateMask: mkMask()}, true},
 	{"message - field - invalid (transitive)", &cases.Message{Val: &cases.TestMsg{Const: "foo", Nested: &cases.TestMsg{}}}, false},
 
 	{"message - skip - valid", &cases.MessageSkip{Val: &cases.TestMsg{}}, true},
@@ -1063,6 +1122,7 @@ var messageCases = []TestCase{
 	{"message - cross-package embed none - valid (nil)", &cases.MessageCrossPackage{}, true},
 	{"message - cross-package embed none - valid (empty)", &cases.MessageCrossPackage{Val: &other_package.Embed{}}, false},
 	{"message - cross-package embed none - invalid", &cases.MessageCrossPackage{Val: &other_package.Embed{Val: -1}}, false},
+	{"message - cross-package embed none - no mask - valid", &cases.MessageCrossPackage{Val: &other_package.Embed{Val: -1}, UpdateMask: mkMask()}, true},
 }
 
 var repeatedCases = []TestCase{
@@ -1072,20 +1132,24 @@ var repeatedCases = []TestCase{
 	{"repeated - embed none - valid (nil)", &cases.RepeatedEmbedNone{}, true},
 	{"repeated - embed none - valid (empty)", &cases.RepeatedEmbedNone{Val: []*cases.Embed{}}, true},
 	{"repeated - embed none - invalid", &cases.RepeatedEmbedNone{Val: []*cases.Embed{{Val: -1}}}, false},
+	{"repeated - embed none - no mask - valid", &cases.RepeatedEmbedNone{Val: []*cases.Embed{{Val: -1}}, UpdateMask: mkMask()}, true},
 
 	{"repeated - cross-package embed none - valid", &cases.RepeatedEmbedCrossPackageNone{Val: []*other_package.Embed{{Val: 1}}}, true},
 	{"repeated - cross-package embed none - valid (nil)", &cases.RepeatedEmbedCrossPackageNone{}, true},
 	{"repeated - cross-package embed none - valid (empty)", &cases.RepeatedEmbedCrossPackageNone{Val: []*other_package.Embed{}}, true},
 	{"repeated - cross-package embed none - invalid", &cases.RepeatedEmbedCrossPackageNone{Val: []*other_package.Embed{{Val: -1}}}, false},
+	{"repeated - cross-package embed none - no mask - valid", &cases.RepeatedEmbedCrossPackageNone{Val: []*other_package.Embed{{Val: -1}}, UpdateMask: mkMask()}, true},
 
 	{"repeated - min - valid", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}, {Val: 2}, {Val: 3}}}, true},
 	{"repeated - min - valid (equal)", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}, {Val: 2}}}, true},
 	{"repeated - min - invalid", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}}}, false},
+	{"repeated - min - no mask - valid", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}}, UpdateMask: mkMask()}, true},
 	{"repeated - min - invalid (element)", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}, {Val: -1}}}, false},
 
 	{"repeated - max - valid", &cases.RepeatedMax{Val: []float64{1, 2}}, true},
 	{"repeated - max - valid (equal)", &cases.RepeatedMax{Val: []float64{1, 2, 3}}, true},
 	{"repeated - max - invalid", &cases.RepeatedMax{Val: []float64{1, 2, 3, 4}}, false},
+	{"repeated - max - no mask - valid", &cases.RepeatedMax{Val: []float64{1, 2, 3, 4}, UpdateMask: mkMask()}, true},
 
 	{"repeated - min/max - valid", &cases.RepeatedMinMax{Val: []int32{1, 2, 3}}, true},
 	{"repeated - min/max - valid (min)", &cases.RepeatedMinMax{Val: []int32{1, 2}}, true},
@@ -1101,11 +1165,13 @@ var repeatedCases = []TestCase{
 	{"repeated - unique - valid (empty)", &cases.RepeatedUnique{}, true},
 	{"repeated - unique - valid (case sensitivity)", &cases.RepeatedUnique{Val: []string{"foo", "Foo"}}, true},
 	{"repeated - unique - invalid", &cases.RepeatedUnique{Val: []string{"foo", "bar", "foo", "baz"}}, false},
+	{"repeated - unique - no mask - valid", &cases.RepeatedUnique{Val: []string{"foo", "bar", "foo", "baz"}, UpdateMask: mkMask()}, true},
 
 	{"repeated - items - valid", &cases.RepeatedItemRule{Val: []float32{1, 2, 3}}, true},
 	{"repeated - items - valid (empty)", &cases.RepeatedItemRule{Val: []float32{}}, true},
 	{"repeated - items - valid (pattern)", &cases.RepeatedItemPattern{Val: []string{"Alpha", "Beta123"}}, true},
 	{"repeated - items - invalid", &cases.RepeatedItemRule{Val: []float32{1, -2, 3}}, false},
+	{"repeated - items - no mask - valid", &cases.RepeatedItemRule{Val: []float32{1, -2, 3}, UpdateMask: mkMask()}, true},
 	{"repeated - items - invalid (pattern)", &cases.RepeatedItemPattern{Val: []string{"Alpha", "!@#$%^&*()"}}, false},
 	{"repeated - items - invalid (in)", &cases.RepeatedItemIn{Val: []string{"baz"}}, false},
 	{"repeated - items - valid (in)", &cases.RepeatedItemIn{Val: []string{"foo"}}, true},
@@ -1127,6 +1193,7 @@ var repeatedCases = []TestCase{
 	{"repeated - duration - gte - valid (empty)", &cases.RepeatedDuration{}, true},
 	{"repeated - duration - gte - valid (equal)", &cases.RepeatedDuration{Val: []*duration.Duration{{Nanos: 1000000}}}, true},
 	{"repeated - duration - gte - invalid", &cases.RepeatedDuration{Val: []*duration.Duration{{Seconds: -1}}}, false},
+	{"repeated - duration - gte - no mask - valid", &cases.RepeatedDuration{Val: []*duration.Duration{{Seconds: -1}}, UpdateMask: mkMask()}, true},
 }
 
 var mapCases = []TestCase{
@@ -1135,10 +1202,12 @@ var mapCases = []TestCase{
 	{"map - min pairs - valid", &cases.MapMin{Val: map[int32]float32{1: 2, 3: 4, 5: 6}}, true},
 	{"map - min pairs - valid (equal)", &cases.MapMin{Val: map[int32]float32{1: 2, 3: 4}}, true},
 	{"map - min pairs - invalid", &cases.MapMin{Val: map[int32]float32{1: 2}}, false},
+	{"map - min pairs - no mask - valid", &cases.MapMin{Val: map[int32]float32{1: 2}, UpdateMask: mkMask()}, true},
 
 	{"map - max pairs - valid", &cases.MapMax{Val: map[int64]float64{1: 2, 3: 4}}, true},
 	{"map - max pairs - valid (equal)", &cases.MapMax{Val: map[int64]float64{1: 2, 3: 4, 5: 6}}, true},
 	{"map - max pairs - invalid", &cases.MapMax{Val: map[int64]float64{1: 2, 3: 4, 5: 6, 7: 8}}, false},
+	{"map - max pairs - no mask - valid", &cases.MapMax{Val: map[int64]float64{1: 2, 3: 4, 5: 6, 7: 8}, UpdateMask: mkMask()}, true},
 
 	{"map - min/max - valid", &cases.MapMinMax{Val: map[string]bool{"a": true, "b": false, "c": true}}, true},
 	{"map - min/max - valid (min)", &cases.MapMinMax{Val: map[string]bool{"a": true, "b": false}}, true},
@@ -1159,16 +1228,19 @@ var mapCases = []TestCase{
 	{"map - keys - valid (empty)", &cases.MapKeys{Val: map[int64]string{}}, true},
 	{"map - keys - valid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a"}}, true},
 	{"map - keys - invalid", &cases.MapKeys{Val: map[int64]string{1: "a"}}, false},
+	{"map - keys - no mask - valid", &cases.MapKeys{Val: map[int64]string{1: "a"}, UpdateMask: mkMask()}, true},
 	{"map - keys - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}}, false},
 
 	{"map - values - valid", &cases.MapValues{Val: map[string]string{"a": "Alpha", "b": "Beta"}}, true},
 	{"map - values - valid (empty)", &cases.MapValues{Val: map[string]string{}}, true},
 	{"map - values - valid (pattern)", &cases.MapValuesPattern{Val: map[string]string{"a": "A"}}, true},
 	{"map - values - invalid", &cases.MapValues{Val: map[string]string{"a": "A", "b": "B"}}, false},
+	{"map - values - no mask - valid", &cases.MapValues{Val: map[string]string{"a": "A", "b": "B"}, UpdateMask: mkMask()}, true},
 	{"map - values - invalid (pattern)", &cases.MapValuesPattern{Val: map[string]string{"a": "A", "b": "!@#$%^&*()"}}, false},
 
 	{"map - recursive - valid", &cases.MapRecursive{Val: map[uint32]*cases.MapRecursive_Msg{1: {Val: "abc"}}}, true},
 	{"map - recursive - invalid", &cases.MapRecursive{Val: map[uint32]*cases.MapRecursive_Msg{1: {}}}, false},
+	{"map - recursive - no mask - valid", &cases.MapRecursive{Val: map[uint32]*cases.MapRecursive_Msg{1: {}}, UpdateMask: mkMask()}, true},
 }
 
 var oneofCases = []TestCase{
@@ -1194,10 +1266,12 @@ var wrapperCases = []TestCase{
 	{"wrapper - float - valid", &cases.WrapperFloat{Val: &wrappers.FloatValue{Value: 1}}, true},
 	{"wrapper - float - valid (empty)", &cases.WrapperFloat{Val: nil}, true},
 	{"wrapper - float - invalid", &cases.WrapperFloat{Val: &wrappers.FloatValue{Value: 0}}, false},
+	{"wrapper - float - no mask - valid", &cases.WrapperFloat{Val: &wrappers.FloatValue{Value: 0}, UpdateMask: mkMask()}, true},
 
 	{"wrapper - double - valid", &cases.WrapperDouble{Val: &wrappers.DoubleValue{Value: 1}}, true},
 	{"wrapper - double - valid (empty)", &cases.WrapperDouble{Val: nil}, true},
 	{"wrapper - double - invalid", &cases.WrapperDouble{Val: &wrappers.DoubleValue{Value: 0}}, false},
+	{"wrapper - double - no mask - valid", &cases.WrapperDouble{Val: &wrappers.DoubleValue{Value: 0}, UpdateMask: mkMask()}, true},
 
 	{"wrapper - int64 - valid", &cases.WrapperInt64{Val: &wrappers.Int64Value{Value: 1}}, true},
 	{"wrapper - int64 - valid (empty)", &cases.WrapperInt64{Val: nil}, true},
@@ -1218,29 +1292,36 @@ var wrapperCases = []TestCase{
 	{"wrapper - bool - valid", &cases.WrapperBool{Val: &wrappers.BoolValue{Value: true}}, true},
 	{"wrapper - bool - valid (empty)", &cases.WrapperBool{Val: nil}, true},
 	{"wrapper - bool - invalid", &cases.WrapperBool{Val: &wrappers.BoolValue{Value: false}}, false},
+	{"wrapper - bool - no mask - valid", &cases.WrapperBool{Val: &wrappers.BoolValue{Value: false}, UpdateMask: mkMask()}, true},
 
 	{"wrapper - string - valid", &cases.WrapperString{Val: &wrappers.StringValue{Value: "foobar"}}, true},
 	{"wrapper - string - valid (empty)", &cases.WrapperString{Val: nil}, true},
 	{"wrapper - string - invalid", &cases.WrapperString{Val: &wrappers.StringValue{Value: "fizzbuzz"}}, false},
+	{"wrapper - string - no mask - valid", &cases.WrapperString{Val: &wrappers.StringValue{Value: "fizzbuzz"}, UpdateMask: mkMask()}, true},
 
 	{"wrapper - bytes - valid", &cases.WrapperBytes{Val: &wrappers.BytesValue{Value: []byte("foo")}}, true},
 	{"wrapper - bytes - valid (empty)", &cases.WrapperBytes{Val: nil}, true},
 	{"wrapper - bytes - invalid", &cases.WrapperBytes{Val: &wrappers.BytesValue{Value: []byte("x")}}, false},
+	{"wrapper - bytes - no mask - valid", &cases.WrapperBytes{Val: &wrappers.BytesValue{Value: []byte("x")}, UpdateMask: mkMask()}, true},
 
 	{"wrapper - required - string - valid", &cases.WrapperRequiredString{Val: &wrappers.StringValue{Value: "bar"}}, true},
 	{"wrapper - required - string - invalid", &cases.WrapperRequiredString{Val: &wrappers.StringValue{Value: "foo"}}, false},
+	{"wrapper - required - string - no mask - valid", &cases.WrapperRequiredString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask()}, true},
 	{"wrapper - required - string - invalid (empty)", &cases.WrapperRequiredString{}, false},
 
 	{"wrapper - required - string (empty) - valid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: ""}}, true},
 	{"wrapper - required - string (empty) - invalid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: "foo"}}, false},
+	{"wrapper - required - string (empty) - no mask - valid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask()}, true},
 	{"wrapper - required - string (empty) - invalid (empty)", &cases.WrapperRequiredEmptyString{}, false},
 
 	{"wrapper - optional - string (uuid) - valid", &cases.WrapperOptionalUuidString{Val: &wrappers.StringValue{Value: "8b72987b-024a-43b3-b4cf-647a1f925c5d"}}, true},
 	{"wrapper - optional - string (uuid) - valid (empty)", &cases.WrapperOptionalUuidString{}, true},
 	{"wrapper - optional - string (uuid) - invalid", &cases.WrapperOptionalUuidString{Val: &wrappers.StringValue{Value: "foo"}}, false},
+	{"wrapper - optional - string (uuid) - no mask - valid", &cases.WrapperOptionalUuidString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask()}, true},
 
 	{"wrapper - required - float - valid", &cases.WrapperRequiredFloat{Val: &wrappers.FloatValue{Value: 1}}, true},
 	{"wrapper - required - float - invalid", &cases.WrapperRequiredFloat{Val: &wrappers.FloatValue{Value: -5}}, false},
+	{"wrapper - required - float - no mask - valid", &cases.WrapperRequiredFloat{Val: &wrappers.FloatValue{Value: -5}, UpdateMask: mkMask()}, true},
 	{"wrapper - required - float - invalid (empty)", &cases.WrapperRequiredFloat{}, false},
 }
 
@@ -1249,38 +1330,46 @@ var durationCases = []TestCase{
 
 	{"duration - required - valid", &cases.DurationRequired{Val: &duration.Duration{}}, true},
 	{"duration - required - invalid", &cases.DurationRequired{Val: nil}, false},
+	{"duration - required - no mask - valid", &cases.DurationRequired{Val: nil, UpdateMask: mkMask()}, true},
 
 	{"duration - const - valid", &cases.DurationConst{Val: &duration.Duration{Seconds: 3}}, true},
 	{"duration - const - valid (empty)", &cases.DurationConst{}, true},
 	{"duration - const - invalid", &cases.DurationConst{Val: &duration.Duration{Nanos: 3}}, false},
+	{"duration - const - no mask - valid", &cases.DurationConst{Val: &duration.Duration{Nanos: 3}, UpdateMask: mkMask()}, true},
 
 	{"duration - in - valid", &cases.DurationIn{Val: &duration.Duration{Seconds: 1}}, true},
 	{"duration - in - valid (empty)", &cases.DurationIn{}, true},
 	{"duration - in - invalid", &cases.DurationIn{Val: &duration.Duration{}}, false},
+	{"duration - in - no mask - valid", &cases.DurationIn{Val: &duration.Duration{}, UpdateMask: mkMask()}, true},
 
 	{"duration - not in - valid", &cases.DurationNotIn{Val: &duration.Duration{Nanos: 1}}, true},
 	{"duration - not in - valid (empty)", &cases.DurationNotIn{}, true},
 	{"duration - not in - invalid", &cases.DurationNotIn{Val: &duration.Duration{}}, false},
+	{"duration - not in - no mask - valid", &cases.DurationNotIn{Val: &duration.Duration{}, UpdateMask: mkMask()}, true},
 
 	{"duration - lt - valid", &cases.DurationLT{Val: &duration.Duration{Nanos: -1}}, true},
 	{"duration - lt - valid (empty)", &cases.DurationLT{}, true},
 	{"duration - lt - invalid (equal)", &cases.DurationLT{Val: &duration.Duration{}}, false},
 	{"duration - lt - invalid", &cases.DurationLT{Val: &duration.Duration{Seconds: 1}}, false},
+	{"duration - lt - no mask - valid", &cases.DurationLT{Val: &duration.Duration{Seconds: 1}, UpdateMask: mkMask()}, true},
 
 	{"duration - lte - valid", &cases.DurationLTE{Val: &duration.Duration{}}, true},
 	{"duration - lte - valid (empty)", &cases.DurationLTE{}, true},
 	{"duration - lte - valid (equal)", &cases.DurationLTE{Val: &duration.Duration{Seconds: 1}}, true},
 	{"duration - lte - invalid", &cases.DurationLTE{Val: &duration.Duration{Seconds: 1, Nanos: 1}}, false},
+	{"duration - lte - no mask - valid", &cases.DurationLTE{Val: &duration.Duration{Seconds: 1, Nanos: 1}, UpdateMask: mkMask()}, true},
 
 	{"duration - gt - valid", &cases.DurationGT{Val: &duration.Duration{Seconds: 1}}, true},
 	{"duration - gt - valid (empty)", &cases.DurationGT{}, true},
 	{"duration - gt - invalid (equal)", &cases.DurationGT{Val: &duration.Duration{Nanos: 1000}}, false},
 	{"duration - gt - invalid", &cases.DurationGT{Val: &duration.Duration{}}, false},
+	{"duration - gt - no mask - valid", &cases.DurationGT{Val: &duration.Duration{}, UpdateMask: mkMask()}, true},
 
 	{"duration - gte - valid", &cases.DurationGTE{Val: &duration.Duration{Seconds: 3}}, true},
 	{"duration - gte - valid (empty)", &cases.DurationGTE{}, true},
 	{"duration - gte - valid (equal)", &cases.DurationGTE{Val: &duration.Duration{Nanos: 1000000}}, true},
 	{"duration - gte - invalid", &cases.DurationGTE{Val: &duration.Duration{Seconds: -1}}, false},
+	{"duration - gte - no mask - valid", &cases.DurationGTE{Val: &duration.Duration{Seconds: -1}, UpdateMask: mkMask()}, true},
 
 	{"duration - gt & lt - valid", &cases.DurationGTLT{Val: &duration.Duration{Nanos: 1000}}, true},
 	{"duration - gt & lt - valid (empty)", &cases.DurationGTLT{}, true},
@@ -1293,6 +1382,7 @@ var durationCases = []TestCase{
 	{"duration - exclusive gt & lt - valid (above)", &cases.DurationExLTGT{Val: &duration.Duration{Seconds: 2}}, true},
 	{"duration - exclusive gt & lt - valid (below)", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: -1}}, true},
 	{"duration - exclusive gt & lt - invalid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}}, false},
+	{"duration - exclusive gt & lt - no mask - valid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}, UpdateMask: mkMask()}, true},
 	{"duration - exclusive gt & lt - invalid (max)", &cases.DurationExLTGT{Val: &duration.Duration{Seconds: 1}}, false},
 	{"duration - exclusive gt & lt - invalid (min)", &cases.DurationExLTGT{Val: &duration.Duration{}}, false},
 
@@ -1309,6 +1399,7 @@ var durationCases = []TestCase{
 	{"duration - exclusive gte & lte - valid (max)", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 3600}}, true},
 	{"duration - exclusive gte & lte - valid (min)", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 60}}, true},
 	{"duration - exclusive gte & lte - invalid", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 61}}, false},
+	{"duration - exclusive gte & lte - no mask - valid", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 61}, UpdateMask: mkMask()}, true},
 	{"duration - fields with other fields - invalid other field", &cases.DurationFieldWithOtherFields{DurationVal: nil, IntVal: 12}, false},
 }
 
@@ -1317,30 +1408,36 @@ var timestampCases = []TestCase{
 
 	{"timestamp - required - valid", &cases.TimestampRequired{Val: &timestamp.Timestamp{}}, true},
 	{"timestamp - required - invalid", &cases.TimestampRequired{Val: nil}, false},
+	{"timestamp - required - no mask - valid", &cases.TimestampRequired{Val: nil, UpdateMask: mkMask()}, true},
 
 	{"timestamp - const - valid", &cases.TimestampConst{Val: &timestamp.Timestamp{Seconds: 3}}, true},
 	{"timestamp - const - valid (empty)", &cases.TimestampConst{}, true},
 	{"timestamp - const - invalid", &cases.TimestampConst{Val: &timestamp.Timestamp{Nanos: 3}}, false},
+	{"timestamp - const - no mask - valid", &cases.TimestampConst{Val: &timestamp.Timestamp{Nanos: 3}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - lt - valid", &cases.TimestampLT{Val: &timestamp.Timestamp{Seconds: -1}}, true},
 	{"timestamp - lt - valid (empty)", &cases.TimestampLT{}, true},
 	{"timestamp - lt - invalid (equal)", &cases.TimestampLT{Val: &timestamp.Timestamp{}}, false},
 	{"timestamp - lt - invalid", &cases.TimestampLT{Val: &timestamp.Timestamp{Seconds: 1}}, false},
+	{"timestamp - lt - no mask - valid", &cases.TimestampLT{Val: &timestamp.Timestamp{Seconds: 1}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - lte - valid", &cases.TimestampLTE{Val: &timestamp.Timestamp{}}, true},
 	{"timestamp - lte - valid (empty)", &cases.TimestampLTE{}, true},
 	{"timestamp - lte - valid (equal)", &cases.TimestampLTE{Val: &timestamp.Timestamp{Seconds: 1}}, true},
 	{"timestamp - lte - invalid", &cases.TimestampLTE{Val: &timestamp.Timestamp{Seconds: 1, Nanos: 1}}, false},
+	{"timestamp - lte - no mask - valid", &cases.TimestampLTE{Val: &timestamp.Timestamp{Seconds: 1, Nanos: 1}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - gt - valid", &cases.TimestampGT{Val: &timestamp.Timestamp{Seconds: 1}}, true},
 	{"timestamp - gt - valid (empty)", &cases.TimestampGT{}, true},
 	{"timestamp - gt - invalid (equal)", &cases.TimestampGT{Val: &timestamp.Timestamp{Nanos: 1000}}, false},
 	{"timestamp - gt - invalid", &cases.TimestampGT{Val: &timestamp.Timestamp{}}, false},
+	{"timestamp - gt - no mask - valid", &cases.TimestampGT{Val: &timestamp.Timestamp{}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - gte - valid", &cases.TimestampGTE{Val: &timestamp.Timestamp{Seconds: 3}}, true},
 	{"timestamp - gte - valid (empty)", &cases.TimestampGTE{}, true},
 	{"timestamp - gte - valid (equal)", &cases.TimestampGTE{Val: &timestamp.Timestamp{Nanos: 1000000}}, true},
 	{"timestamp - gte - invalid", &cases.TimestampGTE{Val: &timestamp.Timestamp{Seconds: -1}}, false},
+	{"timestamp - gte - no mask - valid", &cases.TimestampGTE{Val: &timestamp.Timestamp{Seconds: -1}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - gt & lt - valid", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Nanos: 1000}}, true},
 	{"timestamp - gt & lt - valid (empty)", &cases.TimestampGTLT{}, true},
@@ -1353,6 +1450,7 @@ var timestampCases = []TestCase{
 	{"timestamp - exclusive gt & lt - valid (above)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Seconds: 2}}, true},
 	{"timestamp - exclusive gt & lt - valid (below)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Seconds: -1}}, true},
 	{"timestamp - exclusive gt & lt - invalid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}}, false},
+	{"timestamp - exclusive gt & lt - no mask - valid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}, UpdateMask: mkMask()}, true},
 	{"timestamp - exclusive gt & lt - invalid (max)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Seconds: 1}}, false},
 	{"timestamp - exclusive gt & lt - invalid (min)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{}}, false},
 
@@ -1369,14 +1467,17 @@ var timestampCases = []TestCase{
 	{"timestamp - exclusive gte & lte - valid (max)", &cases.TimestampExGTELTE{Val: &timestamp.Timestamp{Seconds: 3600}}, true},
 	{"timestamp - exclusive gte & lte - valid (min)", &cases.TimestampExGTELTE{Val: &timestamp.Timestamp{Seconds: 60}}, true},
 	{"timestamp - exclusive gte & lte - invalid", &cases.TimestampExGTELTE{Val: &timestamp.Timestamp{Seconds: 61}}, false},
+	{"timestamp - exclusive gte & lte - no mask - valid", &cases.TimestampExGTELTE{Val: &timestamp.Timestamp{Seconds: 61}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - lt now - valid", &cases.TimestampLTNow{Val: &timestamp.Timestamp{}}, true},
 	{"timestamp - lt now - valid (empty)", &cases.TimestampLTNow{}, true},
 	{"timestamp - lt now - invalid", &cases.TimestampLTNow{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}}, false},
+	{"timestamp - lt now - no mask - valid", &cases.TimestampLTNow{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - gt now - valid", &cases.TimestampGTNow{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}}, true},
 	{"timestamp - gt now - valid (empty)", &cases.TimestampGTNow{}, true},
 	{"timestamp - gt now - invalid", &cases.TimestampGTNow{Val: &timestamp.Timestamp{}}, false},
+	{"timestamp - gt now - no mask - valid", &cases.TimestampGTNow{Val: &timestamp.Timestamp{}, UpdateMask: mkMask()}, true},
 
 	{"timestamp - within - valid", &cases.TimestampWithin{Val: ptypes.TimestampNow()}, true},
 	{"timestamp - within - valid (empty)", &cases.TimestampWithin{}, true},
@@ -1399,20 +1500,25 @@ var anyCases = []TestCase{
 
 	{"any - required - valid", &cases.AnyRequired{Val: &any.Any{}}, true},
 	{"any - required - invalid", &cases.AnyRequired{Val: nil}, false},
+	{"any - required - no mask - valid", &cases.AnyRequired{Val: nil, UpdateMask: mkMask()}, true},
 
 	{"any - in - valid", &cases.AnyIn{Val: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Duration"}}, true},
 	{"any - in - valid (empty)", &cases.AnyIn{}, true},
 	{"any - in - invalid", &cases.AnyIn{Val: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Timestamp"}}, false},
+	{"any - in - no mask - valid", &cases.AnyIn{Val: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Timestamp"}, UpdateMask: mkMask()}, true},
 
 	{"any - not in - valid", &cases.AnyNotIn{Val: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Duration"}}, true},
 	{"any - not in - valid (empty)", &cases.AnyNotIn{}, true},
 	{"any - not in - invalid", &cases.AnyNotIn{Val: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Timestamp"}}, false},
+	{"any - not in - no mask - valid", &cases.AnyNotIn{Val: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Timestamp"}, UpdateMask: mkMask()}, true},
 }
 
 var kitchenSink = []TestCase{
 	{"kitchensink - field - valid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", IntConst: 5, BoolConst: false, FloatVal: &wrappers.FloatValue{Value: 1}, DurVal: &duration.Duration{Seconds: 3}, TsVal: &timestamp.Timestamp{Seconds: 17}, FloatConst: 7, DoubleIn: 123, EnumConst: cases.ComplexTestEnum_ComplexTWO, AnyVal: &any.Any{TypeUrl: "type.googleapis.com/google.protobuf.Duration"}, RepTsVal: []*timestamp.Timestamp{{Seconds: 3}}, MapVal: map[int32]string{-1: "a", -2: "b"}, BytesVal: []byte("\x00\x99"), O: &cases.ComplexTestMsg_X{X: "foobar"}}}, true},
 	{"kitchensink - valid (unset)", &cases.KitchenSinkMessage{}, true},
 	{"kitchensink - field - invalid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{}}, false},
+	{"kitchensink - field - no mask - valid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{}, UpdateMask: mkMask()}, true},
 	{"kitchensink - field - embedded - invalid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{}}}, false},
+	{"kitchensink - field - embedded - no mask - valid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{}}, UpdateMask: mkMask()}, true},
 	{"kitchensink - field - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}}, false},
 }
