@@ -13,6 +13,7 @@ import (
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"google.golang.org/genproto/protobuf/field_mask"
 )
 
 type TestCase struct {
@@ -61,11 +62,17 @@ func init() {
 	}
 }
 
+func mkMask(paths ...string) *field_mask.FieldMask {
+	return &field_mask.FieldMask{Paths: paths}
+}
+
 var floatCases = []TestCase{
 	{"float - none - valid", &cases.FloatNone{Val: -1.23456}, true},
 
 	{"float - const - valid", &cases.FloatConst{Val: 1.23}, true},
 	{"float - const - invalid", &cases.FloatConst{Val: 4.56}, false},
+	{"float - const - invalid - mask/present - invalid", &cases.FloatConst{Val: 4.56, UpdateMask: mkMask("val")}, false},
+	{"float - const - invalid - mask/absent  - valid", &cases.FloatConst{Val: 4.56, UpdateMask: mkMask()}, true},
 
 	{"float - in - valid", &cases.FloatIn{Val: 7.89}, true},
 	{"float - in - invalid", &cases.FloatIn{Val: 10.11}, false},

@@ -5,11 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
 	_ "github.com/envoyproxy/protoc-gen-validate/tests/harness/cases/go"
 	_ "github.com/envoyproxy/protoc-gen-validate/tests/harness/cases/other_package/go"
 	harness "github.com/envoyproxy/protoc-gen-validate/tests/harness/go"
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/ptypes"
+	"google.golang.org/genproto/protobuf/field_mask"
 )
 
 func main() {
@@ -22,11 +23,22 @@ func main() {
 	da := new(ptypes.DynamicAny)
 	checkErr(ptypes.UnmarshalAny(tc.Message, da))
 
-	msg := da.Message.(interface {
+	var mask *field_mask.FieldMask
+	if m, ok := da.Message.(interface {
+		GetMask() *field_mask.FieldMask
+	}); ok {
+		mask = m.GetMask()
+	}
+
+	// just don't panic
+	_ = da.Message.(interface {
 		Validate() error
 	})
-	checkValid(msg.Validate())
 
+	msg := da.Message.(interface {
+		ValidateWithMask(*field_mask.FieldMask) error
+	})
+	checkValid(msg.ValidateWithMask(mask))
 }
 
 func checkValid(err error) {
