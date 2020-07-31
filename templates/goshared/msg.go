@@ -48,7 +48,7 @@ func (m {{ (msgTyp .).Pointer }}) maskHas(mask *field_mask.FieldMask, name strin
 		return true
 	}
 	for _, path := range mask.GetPaths() {
-		if name == path {
+		if name == path || strings.HasPrefix(path, name+".") {
 			return true
 		}
 	}
