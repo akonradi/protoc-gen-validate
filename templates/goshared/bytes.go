@@ -16,7 +16,7 @@ const bytesTpl = `
 	{{ else if $r.MinLen }}
 		{{ if $r.MaxLen }}
 			l := len({{ accessor . }})
-			if m.maskHas(mask, "{{ $f.Name }}") && l < {{ $r.GetMinLen }} || l > {{ $r.GetMaxLen }} {
+			if m.maskHas(mask, "{{ $f.Name }}") && (l < {{ $r.GetMinLen }} || l > {{ $r.GetMaxLen }}) {
 				return {{ err . "value length must be between " $r.GetMinLen " and " $r.GetMaxLen " bytes, inclusive" }}
 			}
 		{{ else }}
