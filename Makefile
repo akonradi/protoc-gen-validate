@@ -54,7 +54,7 @@ bin/golint:
 bin/protoc-gen-go:
 	GOBIN=$(shell pwd)/bin go install github.com/golang/protobuf/protoc-gen-go
 
-bin/harness:
+bin/harness: tests/harness/executor/*.go tests/harness/cases/go/*.go tests/harness/cases/other_package/go/*.go
 	cd tests && go build -o ../bin/harness ./harness/executor
 
 .PHONY: harness
@@ -98,7 +98,7 @@ tests/harness/go/harness.pb.go: bin/protoc-gen-go
 		--plugin=protoc-gen-go=$(shell pwd)/bin/protoc-gen-go \
 		--go_out="${GO_IMPORT}:./go" harness.proto
 
-tests/harness/go/main/go-harness:
+tests/harness/go/main/go-harness: tests/harness/go/main/*.go
 	# generates the go-specific test harness
 	cd tests && go build -o ./harness/go/main/go-harness ./harness/go/main
 
