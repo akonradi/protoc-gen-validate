@@ -4,6 +4,7 @@ package tests.harness.cases;
 option go_package = "cases";
 
 import "validate/validate.proto";
+import "google/protobuf/field_mask.proto";
 
 message TestOneOfMsg {
     bool val = 1 [(validate.rules).bool.const = true];
@@ -22,6 +23,7 @@ message OneOf {
         int32        y = 2 [(validate.rules).int32.gt = 0];
         TestOneOfMsg z = 3;
     }
+    google.protobuf.FieldMask update_mask = 4;
 }
 
 message OneOfRequired {
@@ -31,4 +33,5 @@ message OneOfRequired {
         string       x = 1;
         int32        y = 2;
     }
+    google.protobuf.FieldMask update_mask = 3;
 }

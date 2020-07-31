@@ -1487,11 +1487,17 @@ var messageCases = []TestCase{
 	{"message - field - in mask - invalid (sub-message)", &cases.Message{Val: &cases.TestMsg{}, UpdateMask: mkMask("val")}, false},
 	{"message - field - in mask - invalid (sub-message field)", &cases.Message{Val: &cases.TestMsg{}, UpdateMask: mkMask("val.const")}, false},
 	{"message - field - invalid (transitive)", &cases.Message{Val: &cases.TestMsg{Const: "foo", Nested: &cases.TestMsg{}}}, false},
+	{"message - field - no mask - valid (transitive)", &cases.Message{Val: &cases.TestMsg{Const: "foo", Nested: &cases.TestMsg{}}, UpdateMask: mkMask("val.bar")}, true},
+	{"message - field - in mask - invalid (transitive sub-message top-level only)", &cases.Message{Val: &cases.TestMsg{Const: "foo", Nested: &cases.TestMsg{}}, UpdateMask: mkMask("val")}, false},
+	{"message - field - in mask - invalid (transitive sub-message)", &cases.Message{Val: &cases.TestMsg{Const: "foo", Nested: &cases.TestMsg{}}, UpdateMask: mkMask("val.nested")}, false},
+	{"message - field - in mask - invalid (transitive sub-message field)", &cases.Message{Val: &cases.TestMsg{Const: "foo", Nested: &cases.TestMsg{}}, UpdateMask: mkMask("val.nested.const")}, false},
 
 	{"message - skip - valid", &cases.MessageSkip{Val: &cases.TestMsg{}}, true},
 
 	{"message - required - valid", &cases.MessageRequired{Val: &cases.TestMsg{Const: "foo"}}, true},
 	{"message - required - invalid", &cases.MessageRequired{}, false},
+	{"message - required - no mask - valid", &cases.MessageRequired{UpdateMask: mkMask()}, true},
+	{"message - required - in mask - invalid", &cases.MessageRequired{UpdateMask: mkMask("val")}, false},
 
 	{"message - cross-package embed none - valid", &cases.MessageCrossPackage{Val: &other_package.Embed{Val: 1}}, true},
 	{"message - cross-package embed none - valid (nil)", &cases.MessageCrossPackage{}, true},
@@ -1524,6 +1530,8 @@ var repeatedCases = []TestCase{
 	{"repeated - min - no mask - valid", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}}, UpdateMask: mkMask()}, true},
 	{"repeated - min - in mask - invalid", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}}, UpdateMask: mkMask("val")}, false},
 	{"repeated - min - invalid (element)", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}, {Val: -1}}}, false},
+	{"repeated - min - no mask - valid (element)", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}, {Val: -1}}, UpdateMask: mkMask()}, true},
+	{"repeated - min - in mask - invalid (element)", &cases.RepeatedMin{Val: []*cases.Embed{{Val: 1}, {Val: -1}}, UpdateMask: mkMask("val")}, false},
 
 	{"repeated - max - valid", &cases.RepeatedMax{Val: []float64{1, 2}}, true},
 	{"repeated - max - valid (equal)", &cases.RepeatedMax{Val: []float64{1, 2, 3}}, true},
@@ -1536,10 +1544,18 @@ var repeatedCases = []TestCase{
 	{"repeated - min/max - valid (max)", &cases.RepeatedMinMax{Val: []int32{1, 2, 3, 4}}, true},
 	{"repeated - min/max - invalid (below)", &cases.RepeatedMinMax{Val: []int32{}}, false},
 	{"repeated - min/max - invalid (above)", &cases.RepeatedMinMax{Val: []int32{1, 2, 3, 4, 5}}, false},
+	{"repeated - min/max - no mask - valid (below)", &cases.RepeatedMinMax{Val: []int32{}, UpdateMask: mkMask()}, true},
+	{"repeated - min/max - no mask - valid (above)", &cases.RepeatedMinMax{Val: []int32{1, 2, 3, 4, 5}, UpdateMask: mkMask()}, true},
+	{"repeated - min/max - in mask - invalid (below)", &cases.RepeatedMinMax{Val: []int32{}, UpdateMask: mkMask("val")}, false},
+	{"repeated - min/max - in mask - invalid (above)", &cases.RepeatedMinMax{Val: []int32{1, 2, 3, 4, 5}, UpdateMask: mkMask("val")}, false},
 
 	{"repeated - exact - valid", &cases.RepeatedExact{Val: []uint32{1, 2, 3}}, true},
 	{"repeated - exact - invalid (below)", &cases.RepeatedExact{Val: []uint32{1, 2}}, false},
 	{"repeated - exact - invalid (above)", &cases.RepeatedExact{Val: []uint32{1, 2, 3, 4}}, false},
+	{"repeated - exact - no mask - valid (below)", &cases.RepeatedExact{Val: []uint32{1, 2}, UpdateMask: mkMask()}, true},
+	{"repeated - exact - no mask - valid (above)", &cases.RepeatedExact{Val: []uint32{1, 2, 3, 4}, UpdateMask: mkMask()}, true},
+	{"repeated - exact - in mask - invalid (below)", &cases.RepeatedExact{Val: []uint32{1, 2}, UpdateMask: mkMask("val")}, false},
+	{"repeated - exact - in mask - invalid (above)", &cases.RepeatedExact{Val: []uint32{1, 2, 3, 4}, UpdateMask: mkMask("val")}, false},
 
 	{"repeated - unique - valid", &cases.RepeatedUnique{Val: []string{"foo", "bar", "baz"}}, true},
 	{"repeated - unique - valid (empty)", &cases.RepeatedUnique{}, true},
@@ -1554,22 +1570,35 @@ var repeatedCases = []TestCase{
 	{"repeated - items - invalid", &cases.RepeatedItemRule{Val: []float32{1, -2, 3}}, false},
 	{"repeated - items - no mask - valid", &cases.RepeatedItemRule{Val: []float32{1, -2, 3}, UpdateMask: mkMask()}, true},
 	{"repeated - items - in mask - invalid", &cases.RepeatedItemRule{Val: []float32{1, -2, 3}, UpdateMask: mkMask("val")}, false},
-	{"repeated - items - invalid (pattern)", &cases.RepeatedItemPattern{Val: []string{"Alpha", "!@#$%^&*()"}}, false},
-	{"repeated - items - invalid (in)", &cases.RepeatedItemIn{Val: []string{"baz"}}, false},
+	{"repeated - items - invalid (pattern)", &cases.RepeatedItemPattern{Val: []string{"Alpha", "!@#$%^&*()"}, UpdateMask: mkMask("val")}, false},
+	{"repeated - items - in mask - invalid (pattern)", &cases.RepeatedItemPattern{Val: []string{"Alpha", "!@#$%^&*()"}}, false},
 	{"repeated - items - valid (in)", &cases.RepeatedItemIn{Val: []string{"foo"}}, true},
-	{"repeated - items - invalid (not_in)", &cases.RepeatedItemNotIn{Val: []string{"foo"}}, false},
+	{"repeated - items - invalid (in)", &cases.RepeatedItemIn{Val: []string{"baz"}}, false},
+	{"repeated - items - no mask - valid (in)", &cases.RepeatedItemIn{Val: []string{"baz"}, UpdateMask: mkMask()}, true},
+	{"repeated - items - in mask - invalid (in)", &cases.RepeatedItemIn{Val: []string{"baz"}, UpdateMask: mkMask("val")}, false},
 	{"repeated - items - valid (not_in)", &cases.RepeatedItemNotIn{Val: []string{"baz"}}, true},
+	{"repeated - items - invalid (not_in)", &cases.RepeatedItemNotIn{Val: []string{"foo"}}, false},
+	{"repeated - items - no mask - valid (not_in)", &cases.RepeatedItemNotIn{Val: []string{"foo"}, UpdateMask: mkMask()}, true},
+	{"repeated - items - in mask - invalid (not_in)", &cases.RepeatedItemNotIn{Val: []string{"foo"}, UpdateMask: mkMask("val")}, false},
 
-	{"repeated - items - invalid (enum in)", &cases.RepeatedEnumIn{Val: []cases.AnEnum{1}}, false},
 	{"repeated - items - valid (enum in)", &cases.RepeatedEnumIn{Val: []cases.AnEnum{0}}, true},
-	{"repeated - items - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}}, false},
+	{"repeated - items - invalid (enum in)", &cases.RepeatedEnumIn{Val: []cases.AnEnum{1}}, false},
+	{"repeated - items - no mask - valid (enum in)", &cases.RepeatedEnumIn{Val: []cases.AnEnum{1}, UpdateMask: mkMask()}, true},
+	{"repeated - items - in mask - invalid (enum in)", &cases.RepeatedEnumIn{Val: []cases.AnEnum{1}, UpdateMask: mkMask("val")}, false},
 	{"repeated - items - valid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{1}}, true},
+	{"repeated - items - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}}, false},
+	{"repeated - items - no mask - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}, UpdateMask: mkMask()}, true},
+	{"repeated - items - in mask - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}, UpdateMask: mkMask("val")}, false},
 
 	{"repeated - embed skip - valid", &cases.RepeatedEmbedSkip{Val: []*cases.Embed{{Val: 1}}}, true},
 	{"repeated - embed skip - valid (invalid element)", &cases.RepeatedEmbedSkip{Val: []*cases.Embed{{Val: -1}}}, true},
 	{"repeated - min and items len - valid", &cases.RepeatedMinAndItemLen{Val: []string{"aaa", "bbb"}}, true},
 	{"repeated - min and items len - invalid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}}, false},
 	{"repeated - min and items len - invalid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}}, false},
+	{"repeated - min and items len - no mask - invalid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}, UpdateMask: mkMask()}, true},
+	{"repeated - min and items len - no mask - invalid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}, UpdateMask: mkMask()}, true},
+	{"repeated - min and items len - in mask - invalid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}, UpdateMask: mkMask("val")}, false},
+	{"repeated - min and items len - in mask - invalid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}, UpdateMask: mkMask("val")}, false},
 
 	{"repeated - duration - gte - valid", &cases.RepeatedDuration{Val: []*duration.Duration{{Seconds: 3}}}, true},
 	{"repeated - duration - gte - valid (empty)", &cases.RepeatedDuration{}, true},
@@ -1599,10 +1628,18 @@ var mapCases = []TestCase{
 	{"map - min/max - valid (max)", &cases.MapMinMax{Val: map[string]bool{"a": true, "b": false, "c": true, "d": false}}, true},
 	{"map - min/max - invalid (below)", &cases.MapMinMax{Val: map[string]bool{}}, false},
 	{"map - min/max - invalid (above)", &cases.MapMinMax{Val: map[string]bool{"a": true, "b": false, "c": true, "d": false, "e": true}}, false},
+	{"map - min/max - no mask - valid (below)", &cases.MapMinMax{Val: map[string]bool{}, UpdateMask: mkMask()}, true},
+	{"map - min/max - no mask - valid (above)", &cases.MapMinMax{Val: map[string]bool{"a": true, "b": false, "c": true, "d": false, "e": true}, UpdateMask: mkMask()}, true},
+	{"map - min/max - in mask - invalid (below)", &cases.MapMinMax{Val: map[string]bool{}, UpdateMask: mkMask("val")}, false},
+	{"map - min/max - in mask - invalid (above)", &cases.MapMinMax{Val: map[string]bool{"a": true, "b": false, "c": true, "d": false, "e": true}, UpdateMask: mkMask("val")}, false},
 
 	{"map - exact - valid", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b", 3: "c"}}, true},
 	{"map - exact - invalid (below)", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b"}}, false},
 	{"map - exact - invalid (above)", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b", 3: "c", 4: "d"}}, false},
+	{"map - exact - on mask - valid (below)", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b"}, UpdateMask: mkMask()}, true},
+	{"map - exact - on mask - valid (above)", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b", 3: "c", 4: "d"}, UpdateMask: mkMask()}, true},
+	{"map - exact - in mask - invalid (below)", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b"}, UpdateMask: mkMask("val")}, false},
+	{"map - exact - in mask - invalid (above)", &cases.MapExact{Val: map[uint64]string{1: "a", 2: "b", 3: "c", 4: "d"}, UpdateMask: mkMask("val")}, false},
 
 	{"map - no sparse - valid", &cases.MapNoSparse{Val: map[uint32]*cases.MapNoSparse_Msg{1: {}, 2: {}}}, true},
 	{"map - no sparse - valid (empty)", &cases.MapNoSparse{Val: map[uint32]*cases.MapNoSparse_Msg{}}, true},
@@ -1616,6 +1653,8 @@ var mapCases = []TestCase{
 	{"map - keys - no mask - valid", &cases.MapKeys{Val: map[int64]string{1: "a"}, UpdateMask: mkMask()}, true},
 	{"map - keys - in mask - invalid", &cases.MapKeys{Val: map[int64]string{1: "a"}, UpdateMask: mkMask("val")}, false},
 	{"map - keys - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}}, false},
+	{"map - keys - no mask - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}, UpdateMask: mkMask()}, true},
+	{"map - keys - in mask - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}, UpdateMask: mkMask("val")}, false},
 
 	{"map - values - valid", &cases.MapValues{Val: map[string]string{"a": "Alpha", "b": "Beta"}}, true},
 	{"map - values - valid (empty)", &cases.MapValues{Val: map[string]string{}}, true},
@@ -1624,6 +1663,8 @@ var mapCases = []TestCase{
 	{"map - values - no mask - valid", &cases.MapValues{Val: map[string]string{"a": "A", "b": "B"}, UpdateMask: mkMask()}, true},
 	{"map - values - in mask - invalid", &cases.MapValues{Val: map[string]string{"a": "A", "b": "B"}, UpdateMask: mkMask("val")}, false},
 	{"map - values - invalid (pattern)", &cases.MapValuesPattern{Val: map[string]string{"a": "A", "b": "!@#$%^&*()"}}, false},
+	{"map - values - no mask - valid (pattern)", &cases.MapValuesPattern{Val: map[string]string{"a": "A", "b": "!@#$%^&*()"}, UpdateMask: mkMask()}, true},
+	{"map - values - in mask - invalid (pattern)", &cases.MapValuesPattern{Val: map[string]string{"a": "A", "b": "!@#$%^&*()"}, UpdateMask: mkMask("val")}, false},
 
 	{"map - recursive - valid", &cases.MapRecursive{Val: map[uint32]*cases.MapRecursive_Msg{1: {Val: "abc"}}}, true},
 	{"map - recursive - invalid", &cases.MapRecursive{Val: map[uint32]*cases.MapRecursive_Msg{1: {}}}, false},
@@ -1645,6 +1686,8 @@ var oneofCases = []TestCase{
 
 	{"oneof - required - valid", &cases.OneOfRequired{O: &cases.OneOfRequired_X{X: ""}}, true},
 	{"oneof - require - invalid", &cases.OneOfRequired{}, false},
+	{"oneof - require - no mask - valid", &cases.OneOfRequired{UpdateMask: mkMask()}, true},
+	{"oneof - require - in mask - invalid", &cases.OneOfRequired{UpdateMask: mkMask("o")}, false},
 }
 
 var wrapperCases = []TestCase{
@@ -1666,18 +1709,26 @@ var wrapperCases = []TestCase{
 	{"wrapper - int64 - valid", &cases.WrapperInt64{Val: &wrappers.Int64Value{Value: 1}}, true},
 	{"wrapper - int64 - valid (empty)", &cases.WrapperInt64{Val: nil}, true},
 	{"wrapper - int64 - invalid", &cases.WrapperInt64{Val: &wrappers.Int64Value{Value: 0}}, false},
+	{"wrapper - int64 - no mask - valid", &cases.WrapperInt64{Val: &wrappers.Int64Value{Value: 0}, UpdateMask: mkMask()}, true},
+	{"wrapper - int64 - in mask - invalid", &cases.WrapperInt64{Val: &wrappers.Int64Value{Value: 0}, UpdateMask: mkMask("val")}, false},
 
 	{"wrapper - int32 - valid", &cases.WrapperInt32{Val: &wrappers.Int32Value{Value: 1}}, true},
 	{"wrapper - int32 - valid (empty)", &cases.WrapperInt32{Val: nil}, true},
 	{"wrapper - int32 - invalid", &cases.WrapperInt32{Val: &wrappers.Int32Value{Value: 0}}, false},
+	{"wrapper - int32 - no mask - valid", &cases.WrapperInt32{Val: &wrappers.Int32Value{Value: 0}, UpdateMask: mkMask()}, true},
+	{"wrapper - int32 - in mask - invalid", &cases.WrapperInt32{Val: &wrappers.Int32Value{Value: 0}, UpdateMask: mkMask("val")}, false},
 
 	{"wrapper - uint64 - valid", &cases.WrapperUInt64{Val: &wrappers.UInt64Value{Value: 1}}, true},
 	{"wrapper - uint64 - valid (empty)", &cases.WrapperUInt64{Val: nil}, true},
 	{"wrapper - uint64 - invalid", &cases.WrapperUInt64{Val: &wrappers.UInt64Value{Value: 0}}, false},
+	{"wrapper - uint64 - no mask - valid", &cases.WrapperUInt64{Val: &wrappers.UInt64Value{Value: 0}, UpdateMask: mkMask()}, true},
+	{"wrapper - uint64 - in mask - invalid", &cases.WrapperUInt64{Val: &wrappers.UInt64Value{Value: 0}, UpdateMask: mkMask("val")}, false},
 
 	{"wrapper - uint32 - valid", &cases.WrapperUInt32{Val: &wrappers.UInt32Value{Value: 1}}, true},
 	{"wrapper - uint32 - valid (empty)", &cases.WrapperUInt32{Val: nil}, true},
 	{"wrapper - uint32 - invalid", &cases.WrapperUInt32{Val: &wrappers.UInt32Value{Value: 0}}, false},
+	{"wrapper - uint32 - no mask - valid", &cases.WrapperUInt32{Val: &wrappers.UInt32Value{Value: 0}, UpdateMask: mkMask()}, true},
+	{"wrapper - uint32 - in mask - invalid", &cases.WrapperUInt32{Val: &wrappers.UInt32Value{Value: 0}, UpdateMask: mkMask("val")}, false},
 
 	{"wrapper - bool - valid", &cases.WrapperBool{Val: &wrappers.BoolValue{Value: true}}, true},
 	{"wrapper - bool - valid (empty)", &cases.WrapperBool{Val: nil}, true},
@@ -1702,12 +1753,16 @@ var wrapperCases = []TestCase{
 	{"wrapper - required - string - no mask - valid", &cases.WrapperRequiredString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask()}, true},
 	{"wrapper - required - string - in mask - invalid", &cases.WrapperRequiredString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask("val")}, false},
 	{"wrapper - required - string - invalid (empty)", &cases.WrapperRequiredString{}, false},
+	{"wrapper - required - string - no mask - valid (empty)", &cases.WrapperRequiredString{UpdateMask: mkMask()}, true},
+	{"wrapper - required - string - in mask - invalid (empty)", &cases.WrapperRequiredString{UpdateMask: mkMask("val")}, false},
 
 	{"wrapper - required - string (empty) - valid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: ""}}, true},
 	{"wrapper - required - string (empty) - invalid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: "foo"}}, false},
 	{"wrapper - required - string (empty) - no mask - valid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask()}, true},
 	{"wrapper - required - string (empty) - in mask - invalid", &cases.WrapperRequiredEmptyString{Val: &wrappers.StringValue{Value: "foo"}, UpdateMask: mkMask("val")}, false},
 	{"wrapper - required - string (empty) - invalid (empty)", &cases.WrapperRequiredEmptyString{}, false},
+	{"wrapper - required - string (empty) - no mask - valid (empty)", &cases.WrapperRequiredEmptyString{UpdateMask: mkMask()}, true},
+	{"wrapper - required - string (empty) - in mask - invalid (empty)", &cases.WrapperRequiredEmptyString{UpdateMask: mkMask("val")}, false},
 
 	{"wrapper - optional - string (uuid) - valid", &cases.WrapperOptionalUuidString{Val: &wrappers.StringValue{Value: "8b72987b-024a-43b3-b4cf-647a1f925c5d"}}, true},
 	{"wrapper - optional - string (uuid) - valid (empty)", &cases.WrapperOptionalUuidString{}, true},
@@ -1720,6 +1775,8 @@ var wrapperCases = []TestCase{
 	{"wrapper - required - float - no mask - valid", &cases.WrapperRequiredFloat{Val: &wrappers.FloatValue{Value: -5}, UpdateMask: mkMask()}, true},
 	{"wrapper - required - float - in mask - invalid", &cases.WrapperRequiredFloat{Val: &wrappers.FloatValue{Value: -5}, UpdateMask: mkMask("val")}, false},
 	{"wrapper - required - float - invalid (empty)", &cases.WrapperRequiredFloat{}, false},
+	{"wrapper - required - float - no mask - valid (empty)", &cases.WrapperRequiredFloat{UpdateMask: mkMask()}, true},
+	{"wrapper - required - float - in mask - invalid (empty)", &cases.WrapperRequiredFloat{UpdateMask: mkMask("val")}, false},
 }
 
 var durationCases = []TestCase{
@@ -1782,15 +1839,19 @@ var durationCases = []TestCase{
 	{"duration - gt & lt - invalid (below)", &cases.DurationGTLT{Val: &duration.Duration{Nanos: -1000}}, false},
 	{"duration - gt & lt - invalid (max)", &cases.DurationGTLT{Val: &duration.Duration{Seconds: 1}}, false},
 	{"duration - gt & lt - invalid (min)", &cases.DurationGTLT{Val: &duration.Duration{}}, false},
+	{"duration - gt & lt - no mask - valid (above)", &cases.DurationGTLT{Val: &duration.Duration{Seconds: 1000}, UpdateMask: mkMask()}, true},
+	{"duration - gt & lt - no mask - valid (below)", &cases.DurationGTLT{Val: &duration.Duration{Nanos: -1000}, UpdateMask: mkMask()}, true},
+	{"duration - gt & lt - in mask - invalid (above)", &cases.DurationGTLT{Val: &duration.Duration{Seconds: 1000}, UpdateMask: mkMask("val")}, false},
+	{"duration - gt & lt - in mask - invalid (below)", &cases.DurationGTLT{Val: &duration.Duration{Nanos: -1000}, UpdateMask: mkMask("val")}, false},
 
 	{"duration - exclusive gt & lt - valid (empty)", &cases.DurationExLTGT{}, true},
 	{"duration - exclusive gt & lt - valid (above)", &cases.DurationExLTGT{Val: &duration.Duration{Seconds: 2}}, true},
 	{"duration - exclusive gt & lt - valid (below)", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: -1}}, true},
 	{"duration - exclusive gt & lt - invalid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}}, false},
-	{"duration - exclusive gt & lt - no mask - valid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}, UpdateMask: mkMask()}, true},
-	{"duration - exclusive gt & lt - in mask - invalid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}, UpdateMask: mkMask("val")}, false},
 	{"duration - exclusive gt & lt - invalid (max)", &cases.DurationExLTGT{Val: &duration.Duration{Seconds: 1}}, false},
 	{"duration - exclusive gt & lt - invalid (min)", &cases.DurationExLTGT{Val: &duration.Duration{}}, false},
+	{"duration - exclusive gt & lt - no mask - valid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}, UpdateMask: mkMask()}, true},
+	{"duration - exclusive gt & lt - in mask - invalid", &cases.DurationExLTGT{Val: &duration.Duration{Nanos: 1000}, UpdateMask: mkMask("val")}, false},
 
 	{"duration - gte & lte - valid", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 60, Nanos: 1}}, true},
 	{"duration - gte & lte - valid (empty)", &cases.DurationGTELTE{}, true},
@@ -1798,6 +1859,10 @@ var durationCases = []TestCase{
 	{"duration - gte & lte - valid (min)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 60}}, true},
 	{"duration - gte & lte - invalid (above)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 3600, Nanos: 1}}, false},
 	{"duration - gte & lte - invalid (below)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 59}}, false},
+	{"duration - gte & lte - no mask - valid (above)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 3600, Nanos: 1}, UpdateMask: mkMask()}, true},
+	{"duration - gte & lte - no mask - valid (below)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 59}, UpdateMask: mkMask()}, true},
+	{"duration - gte & lte - in mask - invalid (above)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 3600, Nanos: 1}, UpdateMask: mkMask("val")}, false},
+	{"duration - gte & lte - in mask - invalid (below)", &cases.DurationGTELTE{Val: &duration.Duration{Seconds: 59}, UpdateMask: mkMask("val")}, false},
 
 	{"duration - gte & lte - valid (empty)", &cases.DurationExGTELTE{}, true},
 	{"duration - exclusive gte & lte - valid (above)", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 3601}}, true},
@@ -1808,6 +1873,8 @@ var durationCases = []TestCase{
 	{"duration - exclusive gte & lte - no mask - valid", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 61}, UpdateMask: mkMask()}, true},
 	{"duration - exclusive gte & lte - in mask - invalid", &cases.DurationExGTELTE{Val: &duration.Duration{Seconds: 61}, UpdateMask: mkMask("val")}, false},
 	{"duration - fields with other fields - invalid other field", &cases.DurationFieldWithOtherFields{DurationVal: nil, IntVal: 12}, false},
+	{"duration - fields with other fields - no mask - valid other field", &cases.DurationFieldWithOtherFields{DurationVal: nil, IntVal: 12, UpdateMask: mkMask()}, true},
+	{"duration - fields with other fields - in mask - invalid other field", &cases.DurationFieldWithOtherFields{DurationVal: nil, IntVal: 12, UpdateMask: mkMask("int_val")}, false},
 }
 
 var timestampCases = []TestCase{
@@ -1858,15 +1925,19 @@ var timestampCases = []TestCase{
 	{"timestamp - gt & lt - invalid (below)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Seconds: -1000}}, false},
 	{"timestamp - gt & lt - invalid (max)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Seconds: 1}}, false},
 	{"timestamp - gt & lt - invalid (min)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{}}, false},
+	{"timestamp - gt & lt - no mask - valid (above)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Seconds: 1000}, UpdateMask: mkMask()}, true},
+	{"timestamp - gt & lt - no mask - valid (below)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Seconds: -1000}, UpdateMask: mkMask()}, true},
+	{"timestamp - gt & lt - in mask - invalid (above)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Seconds: 1000}, UpdateMask: mkMask("val")}, false},
+	{"timestamp - gt & lt - in mask - invalid (below)", &cases.TimestampGTLT{Val: &timestamp.Timestamp{Seconds: -1000}, UpdateMask: mkMask("val")}, false},
 
 	{"timestamp - exclusive gt & lt - valid (empty)", &cases.TimestampExLTGT{}, true},
 	{"timestamp - exclusive gt & lt - valid (above)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Seconds: 2}}, true},
 	{"timestamp - exclusive gt & lt - valid (below)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Seconds: -1}}, true},
 	{"timestamp - exclusive gt & lt - invalid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}}, false},
-	{"timestamp - exclusive gt & lt - no mask - valid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}, UpdateMask: mkMask()}, true},
-	{"timestamp - exclusive gt & lt - in mask - invalid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}, UpdateMask: mkMask("val")}, false},
 	{"timestamp - exclusive gt & lt - invalid (max)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Seconds: 1}}, false},
 	{"timestamp - exclusive gt & lt - invalid (min)", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{}}, false},
+	{"timestamp - exclusive gt & lt - no mask - valid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}, UpdateMask: mkMask()}, true},
+	{"timestamp - exclusive gt & lt - in mask - invalid", &cases.TimestampExLTGT{Val: &timestamp.Timestamp{Nanos: 1000}, UpdateMask: mkMask("val")}, false},
 
 	{"timestamp - gte & lte - valid", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 60, Nanos: 1}}, true},
 	{"timestamp - gte & lte - valid (empty)", &cases.TimestampGTELTE{}, true},
@@ -1874,6 +1945,10 @@ var timestampCases = []TestCase{
 	{"timestamp - gte & lte - valid (min)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 60}}, true},
 	{"timestamp - gte & lte - invalid (above)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 3600, Nanos: 1}}, false},
 	{"timestamp - gte & lte - invalid (below)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 59}}, false},
+	{"timestamp - gte & lte - no mask - valid (above)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 3600, Nanos: 1}, UpdateMask: mkMask()}, true},
+	{"timestamp - gte & lte - no mask - valid (below)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 59}, UpdateMask: mkMask()}, true},
+	{"timestamp - gte & lte - in mask - invalid (above)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 3600, Nanos: 1}, UpdateMask: mkMask("val")}, false},
+	{"timestamp - gte & lte - in mask - invalid (below)", &cases.TimestampGTELTE{Val: &timestamp.Timestamp{Seconds: 59}, UpdateMask: mkMask("val")}, false},
 
 	{"timestamp - gte & lte - valid (empty)", &cases.TimestampExGTELTE{}, true},
 	{"timestamp - exclusive gte & lte - valid (above)", &cases.TimestampExGTELTE{Val: &timestamp.Timestamp{Seconds: 3601}}, true},
@@ -1900,16 +1975,28 @@ var timestampCases = []TestCase{
 	{"timestamp - within - valid (empty)", &cases.TimestampWithin{}, true},
 	{"timestamp - within - invalid (below)", &cases.TimestampWithin{Val: &timestamp.Timestamp{}}, false},
 	{"timestamp - within - invalid (above)", &cases.TimestampWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}}, false},
+	{"timestamp - within - no mask - valid (below)", &cases.TimestampWithin{Val: &timestamp.Timestamp{}, UpdateMask: mkMask()}, true},
+	{"timestamp - within - no mask - valid (above)", &cases.TimestampWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}, UpdateMask: mkMask()}, true},
+	{"timestamp - within - in mask - invalid (below)", &cases.TimestampWithin{Val: &timestamp.Timestamp{}, UpdateMask: mkMask("val")}, false},
+	{"timestamp - within - in mask - invalid (above)", &cases.TimestampWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}, UpdateMask: mkMask("val")}, false},
 
 	{"timestamp - lt now within - valid", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 1800}}, true},
 	{"timestamp - lt now within - valid (empty)", &cases.TimestampLTNowWithin{}, true},
 	{"timestamp - lt now within - invalid (lt)", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 1800}}, false},
 	{"timestamp - lt now within - invalid (within)", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 7200}}, false},
+	{"timestamp - lt now within - no mask - valid (lt)", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 1800}, UpdateMask: mkMask()}, true},
+	{"timestamp - lt now within - no mask - valid (within)", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 7200}, UpdateMask: mkMask()}, true},
+	{"timestamp - lt now within - in mask - invalid (lt)", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 1800}, UpdateMask: mkMask("val")}, false},
+	{"timestamp - lt now within - in mask - invalid (within)", &cases.TimestampLTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 7200}, UpdateMask: mkMask("val")}, false},
 
 	{"timestamp - gt now within - valid", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 1800}}, true},
 	{"timestamp - gt now within - valid (empty)", &cases.TimestampGTNowWithin{}, true},
 	{"timestamp - gt now within - invalid (gt)", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 1800}}, false},
 	{"timestamp - gt now within - invalid (within)", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}}, false},
+	{"timestamp - gt now within - no mask - valid (gt)", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 1800}, UpdateMask: mkMask()}, true},
+	{"timestamp - gt now within - no mask - valid (within)", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}, UpdateMask: mkMask()}, true},
+	{"timestamp - gt now within - in mask - invalid (gt)", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() - 1800}, UpdateMask: mkMask("val")}, false},
+	{"timestamp - gt now within - in mask - invalid (within)", &cases.TimestampGTNowWithin{Val: &timestamp.Timestamp{Seconds: time.Now().Unix() + 7200}, UpdateMask: mkMask("val")}, false},
 }
 
 var anyCases = []TestCase{
@@ -1943,4 +2030,6 @@ var kitchenSink = []TestCase{
 	{"kitchensink - field - embedded - no mask - valid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{}}, UpdateMask: mkMask()}, true},
 	{"kitchensink - field - embedded - in mask - invalid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{}}, UpdateMask: mkMask("val.another.const")}, false},
 	{"kitchensink - field - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}}, false},
+	{"kitchensink - field - no mask - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}, UpdateMask: mkMask()}, true},
+	{"kitchensink - field - in mask - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}, UpdateMask: mkMask("val.nested.const")}, false},
 }
