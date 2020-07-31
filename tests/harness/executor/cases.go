@@ -602,8 +602,8 @@ var sint32Cases = []TestCase{
 	{"sint32 - gte & lte - valid (min)", &cases.SInt32GTELTE{Val: 128}, true},
 	{"sint32 - gte & lte - invalid (above)", &cases.SInt32GTELTE{Val: 300}, false},
 	{"sint32 - gte & lte - invalid (below)", &cases.SInt32GTELTE{Val: 100}, false},
-	{"sint32 - gte & lte - no mask - invalid (above)", &cases.SInt32GTELTE{Val: 300, UpdateMask: mkMask()}, true},
-	{"sint32 - gte & lte - no mask - invalid (below)", &cases.SInt32GTELTE{Val: 100, UpdateMask: mkMask()}, true},
+	{"sint32 - gte & lte - no mask - valid (above)", &cases.SInt32GTELTE{Val: 300, UpdateMask: mkMask()}, true},
+	{"sint32 - gte & lte - no mask - valid (below)", &cases.SInt32GTELTE{Val: 100, UpdateMask: mkMask()}, true},
 	{"sint32 - gte & lte - in mask - invalid (above)", &cases.SInt32GTELTE{Val: 300, UpdateMask: mkMask("val")}, false},
 	{"sint32 - gte & lte - in mask - invalid (below)", &cases.SInt32GTELTE{Val: 100, UpdateMask: mkMask("val")}, false},
 
@@ -1107,7 +1107,7 @@ var stringCases = []TestCase{
 	{"string - max bytes - invalid", &cases.StringMaxBytes{Val: "123456789"}, false},
 	{"string - max bytes - invalid (multibyte)", &cases.StringMaxBytes{Val: "你好你好你好"}, false},
 	{"string - max bytes - no mask - valid", &cases.StringMaxBytes{Val: "123456789", UpdateMask: mkMask()}, true},
-	{"string - max bytes - no mask - invalid (multibyte)", &cases.StringMaxBytes{Val: "你好你好你好", UpdateMask: mkMask()}, true},
+	{"string - max bytes - no mask - valid (multibyte)", &cases.StringMaxBytes{Val: "你好你好你好", UpdateMask: mkMask()}, true},
 	{"string - max bytes - in mask - invalid", &cases.StringMaxBytes{Val: "123456789", UpdateMask: mkMask("val")}, false},
 	{"string - max bytes - in mask - invalid (multibyte)", &cases.StringMaxBytes{Val: "你好你好你好", UpdateMask: mkMask("val")}, false},
 
@@ -1400,7 +1400,7 @@ var bytesCases = []TestCase{
 	{"bytes - IPv6 - valid", &cases.BytesIPv6{Val: []byte("\x20\x01\x0D\xB8\x85\xA3\x00\x00\x00\x00\x8A\x2E\x03\x70\x73\x34")}, true},
 	{"bytes - IPv6 - invalid", &cases.BytesIPv6{Val: []byte("fooar")}, false},
 	{"bytes - IPv6 - invalid (v4)", &cases.BytesIPv6{Val: []byte{0xC0, 0xA8, 0x00, 0x01}}, false},
-	{"bytes - IPv6 - no mask - invalid", &cases.BytesIPv6{Val: []byte("fooar"), UpdateMask: mkMask()}, true},
+	{"bytes - IPv6 - no mask - valid", &cases.BytesIPv6{Val: []byte("fooar"), UpdateMask: mkMask()}, true},
 	{"bytes - IPv6 - in mask - invalid", &cases.BytesIPv6{Val: []byte("fooar"), UpdateMask: mkMask("val")}, false},
 }
 
@@ -1587,7 +1587,7 @@ var repeatedCases = []TestCase{
 	{"repeated - items - in mask - invalid (enum in)", &cases.RepeatedEnumIn{Val: []cases.AnEnum{1}, UpdateMask: mkMask("val")}, false},
 	{"repeated - items - valid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{1}}, true},
 	{"repeated - items - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}}, false},
-	{"repeated - items - no mask - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}, UpdateMask: mkMask()}, true},
+	{"repeated - items - no mask - valid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}, UpdateMask: mkMask()}, true},
 	{"repeated - items - in mask - invalid (enum not_in)", &cases.RepeatedEnumNotIn{Val: []cases.AnEnum{0}, UpdateMask: mkMask("val")}, false},
 
 	{"repeated - embed skip - valid", &cases.RepeatedEmbedSkip{Val: []*cases.Embed{{Val: 1}}}, true},
@@ -1595,8 +1595,8 @@ var repeatedCases = []TestCase{
 	{"repeated - min and items len - valid", &cases.RepeatedMinAndItemLen{Val: []string{"aaa", "bbb"}}, true},
 	{"repeated - min and items len - invalid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}}, false},
 	{"repeated - min and items len - invalid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}}, false},
-	{"repeated - min and items len - no mask - invalid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}, UpdateMask: mkMask()}, true},
-	{"repeated - min and items len - no mask - invalid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}, UpdateMask: mkMask()}, true},
+	{"repeated - min and items len - no mask - valid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}, UpdateMask: mkMask()}, true},
+	{"repeated - min and items len - no mask - valid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}, UpdateMask: mkMask()}, true},
 	{"repeated - min and items len - in mask - invalid (min)", &cases.RepeatedMinAndItemLen{Val: []string{}, UpdateMask: mkMask("val")}, false},
 	{"repeated - min and items len - in mask - invalid (len)", &cases.RepeatedMinAndItemLen{Val: []string{"x"}, UpdateMask: mkMask("val")}, false},
 
@@ -1653,7 +1653,7 @@ var mapCases = []TestCase{
 	{"map - keys - no mask - valid", &cases.MapKeys{Val: map[int64]string{1: "a"}, UpdateMask: mkMask()}, true},
 	{"map - keys - in mask - invalid", &cases.MapKeys{Val: map[int64]string{1: "a"}, UpdateMask: mkMask("val")}, false},
 	{"map - keys - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}}, false},
-	{"map - keys - no mask - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}, UpdateMask: mkMask()}, true},
+	{"map - keys - no mask - valid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}, UpdateMask: mkMask()}, true},
 	{"map - keys - in mask - invalid (pattern)", &cases.MapKeysPattern{Val: map[string]string{"A": "a", "!@#$%^&*()": "b"}, UpdateMask: mkMask("val")}, false},
 
 	{"map - values - valid", &cases.MapValues{Val: map[string]string{"a": "Alpha", "b": "Beta"}}, true},
@@ -2030,6 +2030,6 @@ var kitchenSink = []TestCase{
 	{"kitchensink - field - embedded - no mask - valid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{}}, UpdateMask: mkMask()}, true},
 	{"kitchensink - field - embedded - in mask - invalid", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{}}, UpdateMask: mkMask("val.another.const")}, false},
 	{"kitchensink - field - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}}, false},
-	{"kitchensink - field - no mask - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}, UpdateMask: mkMask()}, true},
+	{"kitchensink - field - no mask - valid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}, UpdateMask: mkMask()}, true},
 	{"kitchensink - field - in mask - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}, UpdateMask: mkMask("val.nested.const")}, false},
 }
