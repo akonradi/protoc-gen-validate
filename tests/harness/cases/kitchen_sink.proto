@@ -9,7 +9,6 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/any.proto";
-import "google/protobuf/field_mask.proto";
 
 enum ComplexTestEnum {
     ComplexZero = 0;
@@ -41,4 +40,4 @@ message ComplexTestMsg {
     }
 }
 
-message KitchenSinkMessage { ComplexTestMsg val = 1; google.protobuf.FieldMask update_mask = 2; }
+message KitchenSinkMessage { ComplexTestMsg val = 1; }

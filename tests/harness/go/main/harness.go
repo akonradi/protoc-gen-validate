@@ -22,13 +22,7 @@ func main() {
 
 	da := new(ptypes.DynamicAny)
 	checkErr(ptypes.UnmarshalAny(tc.Message, da))
-
-	var mask *field_mask.FieldMask
-	if m, ok := da.Message.(interface {
-		GetUpdateMask() *field_mask.FieldMask
-	}); ok {
-		mask = m.GetUpdateMask()
-	}
+	mask := tc.Mask
 
 	// just don't panic
 	_ = da.Message.(interface {

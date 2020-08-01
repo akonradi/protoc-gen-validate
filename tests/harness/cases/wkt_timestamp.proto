@@ -5,25 +5,24 @@ option go_package = "cases";
 
 import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/field_mask.proto";
 
 message TimestampNone     { google.protobuf.Timestamp val = 1; }
-message TimestampRequired { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.required = true]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampConst    { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.const = {seconds: 3}]; google.protobuf.FieldMask update_mask = 2; }
+message TimestampRequired { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.required = true]; }
+message TimestampConst    { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.const = {seconds: 3}]; }
 
-message TimestampLT       { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.lt = {}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampLTE      { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.lte = {seconds: 1}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampGT       { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.gt = {nanos: 1000}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampGTE      { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.gte = {nanos: 1000000}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampGTLT     { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {gt: {}, lt: {seconds: 1}}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampExLTGT   { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {lt: {}, gt: {seconds: 1}}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampGTELTE   { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {gte: {seconds: 60}, lte: {seconds: 3600}}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampExGTELTE { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {lte: {seconds: 60}, gte: {seconds: 3600}}]; google.protobuf.FieldMask update_mask = 2; }
+message TimestampLT       { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.lt = {}]; }
+message TimestampLTE      { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.lte = {seconds: 1}]; }
+message TimestampGT       { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.gt = {nanos: 1000}]; }
+message TimestampGTE      { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.gte = {nanos: 1000000}]; }
+message TimestampGTLT     { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {gt: {}, lt: {seconds: 1}}]; }
+message TimestampExLTGT   { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {lt: {}, gt: {seconds: 1}}]; }
+message TimestampGTELTE   { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {gte: {seconds: 60}, lte: {seconds: 3600}}]; }
+message TimestampExGTELTE { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {lte: {seconds: 60}, gte: {seconds: 3600}}]; }
 
-message TimestampLTNow { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.lt_now = true]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampGTNow { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.gt_now = true]; google.protobuf.FieldMask update_mask = 2; }
+message TimestampLTNow { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.lt_now = true]; }
+message TimestampGTNow { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.gt_now = true]; }
 
-message TimestampWithin { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.within.seconds = 3600]; google.protobuf.FieldMask update_mask = 2; }
+message TimestampWithin { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp.within.seconds = 3600]; }
 
-message TimestampLTNowWithin { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {lt_now: true, within: {seconds: 3600}}]; google.protobuf.FieldMask update_mask = 2; }
-message TimestampGTNowWithin { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {gt_now: true, within: {seconds: 3600}}]; google.protobuf.FieldMask update_mask = 2; }
+message TimestampLTNowWithin { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {lt_now: true, within: {seconds: 3600}}]; }
+message TimestampGTNowWithin { google.protobuf.Timestamp val = 1 [(validate.rules).timestamp = {gt_now: true, within: {seconds: 3600}}]; }
