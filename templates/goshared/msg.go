@@ -55,6 +55,32 @@ func (m {{ (msgTyp .).Pointer }}) maskHas(mask *field_mask.FieldMask, name strin
 	return false
 }
 
+func (m {{ (msgTyp .).Pointer }}) updateMask(mask *field_mask.FieldMask, prefix string) *field_mask.FieldMask {
+	// update the mask to remove the outer level
+	if mask != nil {
+		paths := []string{}
+		prefix += "."
+		for _, path := range mask.GetPaths() {
+			if strings.HasPrefix(path, prefix) {
+				paths = append(paths, strings.TrimPrefix(path, prefix))
+			}
+		}
+		if len(paths) > 0 {
+			// if fields were explicitly given within the sub-message, we only
+			// validate those specific fields. We remove the prefix and pass the
+			// remaining fields down as a new FieldMask for sub-message validation.
+			mask = &field_mask.FieldMask{Paths: paths}
+		} else {
+			// if a sub-message is specified in the last position of the field mask,
+			// then we validate the entire sub-message. This matches the expectation
+			// of FieldMask on Update operations to overwrite the entire sub-message.
+			// https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/field-mask
+			mask = nil
+		}
+	}
+	return mask
+}
+
 {{ if needs . "hostname" }}{{ template "hostname" . }}{{ end }}
 
 {{ if needs . "email" }}{{ template "email" . }}{{ end }}

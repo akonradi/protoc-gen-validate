@@ -2033,4 +2033,16 @@ var kitchenSink = []TestCase{
 	{"kitchensink - field - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}}, nil, false},
 	{"kitchensink - field - no mask - valid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}}, mkMask(), true},
 	{"kitchensink - field - in mask - invalid (transitive)", &cases.KitchenSinkMessage{Val: &cases.ComplexTestMsg{Const: "abcd", BoolConst: true, Nested: &cases.ComplexTestMsg{}}}, mkMask("val.nested.const"), false},
+	{"kitchensink - field - overlapping masks", &cases.KitchenSinkMessage{
+		// Prevent regressions in FieldMask usage. Scenario:
+		//     paths: "a.c.d"
+		//     paths: "b.c.e"
+		// A naive approach of just chopping off the outer message ("a", "b") would result in
+		// evaluating "d" within the outer "b" message, and "e" within the outer "a" message.
+		// This is the kind of bug we're testing for here.
+		Val: &cases.ComplexTestMsg{
+			Nested: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{Const: "abcd", IntConst: 23}},
+			AThird: &cases.ComplexTestMsg{Another: &cases.ComplexTestMsg{IntConst: 5, Const: "invalid"}},
+		}}, mkMask("val.nested.another.const","val.a_third.another.int_const"), true,
+	},
 }
