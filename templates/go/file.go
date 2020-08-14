@@ -18,7 +18,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/golang/protobuf/ptypes"
-	"github.com/iancoleman/strcase"
 	"google.golang.org/genproto/protobuf/field_mask"
 
 	{{ range $path, $pkg := enumPackages (externalEnums .) }}
@@ -40,7 +39,6 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = ptypes.DynamicAny{}
 	_ = field_mask.FieldMask{}
-	_ = strcase.ToSnake
 
 	{{ range (externalEnums .) }}
 		_ = {{ pkg . }}.{{ name . }}(0)
