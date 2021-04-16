@@ -16,6 +16,7 @@ proto_library(
 
 go_proto_library(
     name = "harness_go_proto",
+    compiler = "//validate:go_protoc",
     importpath = "github.com/envoyproxy/protoc-gen-validate/tests/harness/go",
     proto = ":harness_proto",
     visibility = ["//visibility:public"],

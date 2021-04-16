@@ -16,7 +16,7 @@ def pgv_go_proto_library(name, proto = None, deps = [], **kwargs):
         name = name,
         proto = proto,
         deps = ["//validate:go_default_library"] + deps,
-        compilers = ["@io_bazel_rules_go//proto:go_proto", "pgv_plugin_go"],
+        compilers = ["//validate:go_protoc", "pgv_plugin_go"],
         visibility = ["//visibility:public"],
         **kwargs
     )
